@@ -1,10 +1,11 @@
-# Azure Application Insights SAP-Fiori-Plugin
+# Azure Application Insights SAP-Fiori-Plugin (PREVIEW)
 
 [SAP Fiori Launchpad Plugin](https://assets.cdn.sap.com/sapcom/docs/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.pdf) to gain insights into Fiori metrics with [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview?tabs=net).
 
-*Find official API documentation for the Azure Application Insights JS snippet [here](https://github.com/microsoft/ApplicationInsights-JS#snippet-setup-ignore-if-using-npm-setup).*
+> **Note**
+> Find official API documentation for the Azure Application Insights JS snippet [here](https://github.com/microsoft/ApplicationInsights-JS#snippet-setup-ignore-if-using-npm-setup).
 
-🧪Tested alpha version with S/4HANA 2021 and Edge Browser.
+🧪Tested alpha version with S/4HANA 2022 and Edge Browser.
 
 ![Architecture overview](img/overview.png)
 
@@ -23,7 +24,8 @@ Meet the magic wand 🪄. This Fiori Shell plugin shows up on the left next to t
 4a. Launchpad Plugin URL: `/sap/bc/ui5_ui5/sap/`. Re-use from here or collect from `npm run deploy` output.
 4b. UI5 Component ID: `microsoft.com.flpmonitor`. Verify from `sap.app.id` in [manifest.json](/webapp/manifest.json).
 
-(Optionally) Azure Monitor for SAP Solutions Instance for infrastructure telemetery correlation
+> **Note**
+> Optionally add Azure Monitor for SAP Solutions Instance for infrastructure telemetery correlation
 
 ## Local build instructions (SAP Business Application Studio)
 
@@ -57,9 +59,9 @@ npm run deploy
 
 ## (Alternative) Deployment to AS ABAP with URL to ZIP file
 
-This repos uses [ui5-task-zipper](https://www.npmjs.com/package/ui5-task-zipper) to create a zip file for your convenience. For more info about the zip file upload process, see [this](https://sapui5.hana.ondemand.com/sdk/docs/topics/a560bd6ed4654fd1b338df065d331872.html) SAPUI5 docs entry.
+This repos uses [ui5-task-zipper](https://github.com/ui5-community/ui5-ecosystem-showcase/tree/main/packages/ui5-task-zipper) that is [available via npm](https://www.npmjs.com/package/ui5-task-zipper) to create a zip file for your convenience. For more info about the zip file upload process, see [this](https://sapui5.hana.ondemand.com/sdk/docs/topics/a560bd6ed4654fd1b338df065d331872.html) SAPUI5 docs entry.
 
-Keep in mind you still to maintain your [Azure Application Insights Connection String](https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string) on the [Component.js](https://github.com/MartinPankraz/az-monitor-sap-fiori-plugin/blob/main/webapp/Component.js#L36).
+Maintain your [Azure Application Insights Connection String](https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string) on the [Component.js](https://github.com/MartinPankraz/az-monitor-sap-fiori-plugin/blob/main/webapp/Component.js#L36).
 
 1. Supply the build result via a URL. One option would be hosting it here on the GitHub repos as zazureflpplugin.zip file. To do so move it from the dist folder after build and commit.
 2. Feed the link to the report **/UI5/UI5_REPOSITORY_LOAD_HTTP** via transaction **SE38** to upload the zip file. For more info, see SAP documentation [Using the SAPUI5 Repository Upload and Download Reports to Synchronize](https://help.sap.com/docs/SAP_NETWEAVER_750/0ce0b8c56fa74dd897fffda8407e8272/a560bd6ed4654fd1b338df065d331872.html) and [SAPUI5 ABAP repos guide](https://sapui5.hana.ondemand.com/sdk/#/topic/91f346786f4d1014b6dd926db0e91070).
