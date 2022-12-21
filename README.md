@@ -2,9 +2,10 @@
 
 [SAP Fiori Launchpad Plugin](https://assets.cdn.sap.com/sapcom/docs/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.pdf) to gain insights into Fiori metrics with [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview?tabs=net).
 
-*Find official API documentation for the Azure Application Insights JS snippet [here](https://github.com/microsoft/ApplicationInsights-JS#snippet-setup-ignore-if-using-npm-setup).*
+> **NOTE**
+> Find official API documentation for the Azure Application Insights JS snippet [here](https://github.com/microsoft/ApplicationInsights-JS#snippet-setup-ignore-if-using-npm-setup).
 
-🧪Tested alpha version with S/4HANA 2021 and Edge Browser.
+🧪Tested alpha version with S/4HANA 2022 and Edge Browser.
 
 ## What to expect from the plugin and usage
 
