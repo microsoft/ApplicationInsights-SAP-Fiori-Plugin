@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+
+specVersion: "2.5"
+metadata:
+  name: microsoft.com.flpmonitor
+type: application
+builder:
+  resources:
+    excludes:
+      - /test/**
+      - /localService/**
+  customTasks:
+    - name: deploy-to-abap
+      afterTask: generateCachebusterInfo
+      configuration:
+        target:
+          destination: PM4
+          url: https://api.integration-ninjas.co.in
+        app:
+          name: ZAZUREFLPPLUGIN
+          description: A fiori plugin to integrate with Azure App Insights
+          package: $tmp
+          transport: ""

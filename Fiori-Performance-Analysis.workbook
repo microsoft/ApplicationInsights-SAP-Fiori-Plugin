@@ -1,0 +1,1109 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# SAP Fiori Performance Analysis"
+      },
+      "name": "Workbook-Header"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "This workbook is a supplemental workbook, combining native capabilities from other Azure Application Insights workbooks, with focus on the SAP Fiori experience. Find the standard insights [here]().\r\n\r\nA dedicated [Azure Fiori Shell Plugin](https://github.com/MartinPankraz/az-monitor-sap-fiori-plugin) serves as collector."
+      },
+      "name": "About-text"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## How to read the workbook?📖\r\nFoundational to the data analysis are the SAP specific Fiori app names, their technical identifiers (as per SAP support ticket components), the SAP semantic objects to infer types of interactions and logged in SAP User.\r\n\r\nFind the complete list of Fiori Apps with its semantic object and action in [Fiori Apps Library](https://fioriappslibrary.hana.ondemand.com/).\r\n\r\nUse the embedded SAP WebGUI jumptarget to investigate SAP backend trace with a given Root-Context-ID (see figure ???).",
+        "style": "info"
+      },
+      "name": "Howto-text"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "crossComponentResources": [
+          "value::selected"
+        ],
+        "parameters": [
+          {
+            "id": "b859a03f-2283-43dd-8536-42714bbfced6",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 6,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resourcecontainers\r\n| where type == \"microsoft.resources/subscriptions\"\r\n| parse id with \"/subscriptions/\" subscriptionId\r\n| join ( resources\r\n| where type =~ 'microsoft.operationalinsights/workspaces'\r\n| summarize by subscriptionId\r\n) on subscriptionId\r\n| project value = subscriptionId, label = name, selected = true",
+            "crossComponentResources": [
+              "value::selected"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": [
+              ""
+            ]
+          },
+          {
+            "id": "8df9c309-e7d1-43ad-b2ad-2d190c0c4e60",
+            "version": "KqlParameterItem/1.0",
+            "name": "Application",
+            "type": 5,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type == \"microsoft.insights/components\"\r\n| project value = id, label = id",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::3"
+              ],
+              "showDefault": false
+            },
+            "defaultValue": "value::3",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": [
+              ""
+            ]
+          }
+        ],
+        "style": "pills",
+        "queryType": 1,
+        "resourceType": "microsoft.insights/components"
+      },
+      "name": "Parameters"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "171ec6b0-45d1-4095-a664-e27a5a0e8e5d",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Interactions",
+            "subTarget": "PageView",
+            "preText": "Overview Tab",
+            "style": "link"
+          },
+          {
+            "id": "81a835f7-a7a7-4fc6-8787-94f3b9f62dd0",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "User View",
+            "subTarget": "UserView",
+            "style": "link"
+          },
+          {
+            "id": "dcc34d65-b5e5-4c47-bce7-8cf32ddf3585",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Fiori Frontend-Server Requests",
+            "subTarget": "RequestView",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "Workbook-tabs"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "crossComponentResources": [
+                "{Application}"
+              ],
+              "parameters": [
+                {
+                  "id": "680ca1cf-0487-418e-8ece-a3b1c0658a88",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "TimeRange",
+                  "type": 4,
+                  "typeSettings": {
+                    "selectableValues": [
+                      {
+                        "durationMs": 14400000
+                      },
+                      {
+                        "durationMs": 43200000
+                      },
+                      {
+                        "durationMs": 86400000
+                      },
+                      {
+                        "durationMs": 172800000
+                      },
+                      {
+                        "durationMs": 259200000
+                      },
+                      {
+                        "durationMs": 604800000
+                      },
+                      {
+                        "durationMs": 1209600000
+                      },
+                      {
+                        "durationMs": 2592000000
+                      },
+                      {
+                        "durationMs": 5184000000
+                      },
+                      {
+                        "durationMs": 7776000000
+                      }
+                    ],
+                    "allowCustom": true
+                  },
+                  "value": {
+                    "durationMs": 1209600000
+                  }
+                },
+                {
+                  "id": "659f1bad-3148-41d1-86de-6a2c01470f98",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "Pages",
+                  "type": 2,
+                  "isRequired": true,
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "let mostUsedEvent = pageViews\r\n| summarize Count = count() by name\r\n| top 3 by Count desc\r\n| summarize makelist(name);\r\npageViews\r\n| summarize Count = count() by name\r\n| extend IsSelected = iff(name in (mostUsedEvent), true, false)\r\n| order by Count desc\r\n| project v = name, t = name, IsSelected\r\n",
+                  "crossComponentResources": [
+                    "{Application}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": [
+                      "value::all"
+                    ]
+                  },
+                  "timeContext": {
+                    "durationMs": 0
+                  },
+                  "timeContextFromParameter": "TimeRange",
+                  "queryType": 0,
+                  "resourceType": "microsoft.insights/components",
+                  "value": [
+                    "value::all"
+                  ]
+                },
+                {
+                  "id": "e886ae6f-2a38-47a0-a998-7c0bc821b6b3",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "User",
+                  "type": 2,
+                  "isRequired": true,
+                  "query": "pageViews \r\n| extend SAPFioriUserID = tostring(customDimensions.SAPFioriUserID)\r\n| extend User = iff(isempty(SAPFioriUserID), \"Unknown user\", SAPFioriUserID)\r\n| summarize PageCount = count() by User\r\n| order by User asc\r\n| serialize Rank = row_number()\r\n| project value = User, label = strcat(User, \" (👁️‍🗨️\", PageCount, \")\"), selected = iff(Rank == 1, true, false)",
+                  "crossComponentResources": [
+                    "{Application}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": []
+                  },
+                  "timeContext": {
+                    "durationMs": 0
+                  },
+                  "timeContextFromParameter": "TimeRange",
+                  "queryType": 0,
+                  "resourceType": "microsoft.insights/components"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components"
+            },
+            "name": "InteractionParameters"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "Click on a Page row in the below table to view the users and more information",
+              "style": "info"
+            },
+            "name": "Overview-explain-text"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let SAPUser = '{User:value}';\r\nlet pages = dynamic([{Pages}]);\r\nlet allEvents = pageViews\r\n| where timestamp {TimeRange};\r\nlet interestingEvents = allEvents\r\n| where array_length(pages)==0 or name in (pages) or '*' in (pages);\r\ninterestingEvents\r\n| extend SAPFioriUserID = tostring(customDimensions.SAPFioriUserID)\r\n| extend User = iff(isempty(SAPFioriUserID), \"Unknown user\", SAPFioriUserID)\r\n| where User == SAPUser\r\n| summarize Users = dcount(user_Id), Sessions = dcount(session_Id), Instances = count() by name\r\n| extend rank = 2, name = strcat('🔷 ', name), nameparam = name\r\n//| union (interestingEvents\r\n//        | summarize Users = dcount(user_Id), Sessions = dcount(session_Id), Instances = count()\r\n//        | extend name = '🔶 Overall', rank = 1, nameparam = 'Overall')\r\n| extend jkey = 1\r\n| join kind = inner (allEvents \r\n                    | summarize AllUsers = dcount(user_Id), AllSessions = dcount(session_Id), AllInstances = count()\r\n                    | extend jkey = 1) on jkey \r\n| project ['Fiori Page Name'] = name, nameparam, ['Unique Users'] = Users, ['As % of app Users'] = round(100.0 * Users / AllUsers, 2),\r\n          ['Unique Sessions'] = Sessions, ['As % of app Sessions'] = round(100.0 * Sessions / AllSessions, 2),\r\n          ['Total Page Views'] = Instances , ['As % of app Page Views'] = round(100.0 * Instances / AllInstances, 2), rank\r\n| order by rank asc, ['Unique Users'] desc\r\n| project-away rank",
+              "size": 0,
+              "showAnalytics": true,
+              "timeContextFromParameter": "TimeRange",
+              "exportFieldName": "nameparam",
+              "exportParameterName": "PageName",
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "crossComponentResources": [
+                "{Application}"
+              ],
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "nameparam",
+                    "formatter": 5
+                  },
+                  {
+                    "columnMatch": "Unique Users",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "min": 0,
+                      "palette": "blue"
+                    }
+                  },
+                  {
+                    "columnMatch": "Unique Sessions",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "min": 0,
+                      "palette": "green"
+                    }
+                  },
+                  {
+                    "columnMatch": "Total Page Views",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "min": 0,
+                      "palette": "yellow"
+                    }
+                  }
+                ]
+              }
+            },
+            "showPin": true,
+            "name": "Usage grid"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let PageName = '{PageName}';\r\npageViews \r\n| where name == PageName\r\n| extend User = iff(isempty(user_AuthenticatedId), \"Unknown user\", user_AuthenticatedId)\r\n| summarize count() by User, name",
+              "size": 0,
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "crossComponentResources": [
+                "{Application}"
+              ]
+            },
+            "customWidth": "30",
+            "conditionalVisibility": {
+              "parameterName": "PageName",
+              "comparison": "isNotEqualTo"
+            },
+            "name": "UniqueUsers"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let PageName = '{PageName}';\r\npageViews \r\n| where name == PageName\r\n| extend User = iff(isempty(user_AuthenticatedId), \"Unknown user\", user_AuthenticatedId)\r\n| summarize count() by bin(timestamp, {TimeRange:grain}), User",
+              "size": 0,
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "crossComponentResources": [
+                "{Application}"
+              ],
+              "visualization": "timechart"
+            },
+            "customWidth": "60",
+            "conditionalVisibility": {
+              "parameterName": "PageName",
+              "comparison": "isNotEqualTo"
+            },
+            "name": "UsersTimeLine",
+            "styleSettings": {
+              "showBorder": true
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let PageName = '{PageName}';\r\nbrowserTimings\r\n| where name == PageName\r\n| summarize [\"Average Network Duration\"] = avg(networkDuration), [\"Average Send Duration\"] =  avg(sendDuration), [\"Average Receive Duration\"] =  avg(receiveDuration), [\"Average Processing Duration\"] = avg(processingDuration), [\"Average Total Duration\"] = avg(totalDuration) by name",
+              "size": 4,
+              "aggregation": 3,
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "crossComponentResources": [
+                "{Application}"
+              ],
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Average Network Duration",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "min": 0,
+                      "palette": "coldHot"
+                    },
+                    "numberFormat": {
+                      "unit": 23,
+                      "options": {
+                        "style": "decimal"
+                      }
+                    }
+                  },
+                  {
+                    "columnMatch": "Average Send Duration",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "min": 0,
+                      "palette": "coldHot"
+                    },
+                    "numberFormat": {
+                      "unit": 23,
+                      "options": {
+                        "style": "decimal"
+                      }
+                    }
+                  },
+                  {
+                    "columnMatch": "Average Receive Duration",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "min": 0,
+                      "palette": "coldHot"
+                    },
+                    "numberFormat": {
+                      "unit": 23,
+                      "options": {
+                        "style": "decimal"
+                      }
+                    }
+                  },
+                  {
+                    "columnMatch": "Average Processing Duration",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "min": 0,
+                      "palette": "coldHot"
+                    },
+                    "numberFormat": {
+                      "unit": 23,
+                      "options": {
+                        "style": "decimal"
+                      }
+                    }
+                  },
+                  {
+                    "columnMatch": "Average Total Duration",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "min": 0,
+                      "palette": "blue"
+                    },
+                    "numberFormat": {
+                      "unit": 23,
+                      "options": {
+                        "style": "decimal"
+                      }
+                    }
+                  }
+                ]
+              },
+              "tileSettings": {
+                "showBorder": false,
+                "titleContent": {
+                  "columnMatch": "name",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "Average Network Duration",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "name",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "Average Network Duration",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              }
+            },
+            "conditionalVisibility": {
+              "parameterName": "PageName",
+              "comparison": "isNotEqualTo"
+            },
+            "name": "PageNameSummary"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "PageView"
+      },
+      "name": "PageViewGroup"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "Select the user you want to dive into the in the drop down below, and then follow the path.",
+              "style": "info"
+            },
+            "name": "Userview-text"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "crossComponentResources": [
+                "{Application}"
+              ],
+              "parameters": [
+                {
+                  "id": "80385975-c530-4fc2-a633-0da3b895133d",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "TimeRange",
+                  "type": 4,
+                  "typeSettings": {
+                    "selectableValues": [
+                      {
+                        "durationMs": 14400000
+                      },
+                      {
+                        "durationMs": 43200000
+                      },
+                      {
+                        "durationMs": 86400000
+                      },
+                      {
+                        "durationMs": 172800000
+                      },
+                      {
+                        "durationMs": 259200000
+                      },
+                      {
+                        "durationMs": 604800000
+                      },
+                      {
+                        "durationMs": 1209600000
+                      },
+                      {
+                        "durationMs": 2592000000
+                      },
+                      {
+                        "durationMs": 5184000000
+                      },
+                      {
+                        "durationMs": 7776000000
+                      }
+                    ],
+                    "allowCustom": true
+                  },
+                  "value": {
+                    "durationMs": 604800000
+                  }
+                },
+                {
+                  "id": "77ab2871-2a6b-4c3a-8bed-f1c2c912b00b",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "User",
+                  "type": 2,
+                  "isRequired": true,
+                  "query": "pageViews \r\n| extend SAPFioriUserID = tostring(customDimensions.SAPFioriUserID)\r\n| extend User = iff(isempty(SAPFioriUserID), \"Unknown user\", SAPFioriUserID)\r\n| summarize PageCount = count() by User\r\n| order by User asc\r\n| serialize Rank = row_number()\r\n| project value = User, label = strcat(User, \" (👁️‍🗨️\", PageCount, \")\"), selected = iff(Rank == 1, true, false)",
+                  "crossComponentResources": [
+                    "{Application}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": []
+                  },
+                  "timeContext": {
+                    "durationMs": 0
+                  },
+                  "timeContextFromParameter": "TimeRange",
+                  "queryType": 0,
+                  "resourceType": "microsoft.insights/components"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components"
+            },
+            "name": "UserView-Parameters"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let SAPUser = '{User:value}';\r\npageViews \r\n| extend SAPFioriUserID = tostring(customDimensions.SAPFioriUserID)\r\n| extend User = iff(isempty(SAPFioriUserID), \"Unknown user\", SAPFioriUserID)\r\n| where User == SAPUser\r\n| extend SAPTechnicalAppComponentID = tostring(customDimensions.SAPTechnicalAppComponentID)\r\n| extend refUri = tostring(customDimensions.refUri)\r\n| extend viewduration = todouble(customMeasurements.duration)\r\n| summarize ActionCount = count(), AverageDuration = avg(viewduration) by name, SAPTechnicalAppComponentID\r\n",
+              "size": 0,
+              "timeContextFromParameter": "TimeRange",
+              "exportFieldName": "SAPTechnicalAppComponentID",
+              "exportParameterName": "SAPTechnicalAppComponentID",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "crossComponentResources": [
+                "{Application}"
+              ],
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "AverageDuration",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "palette": "blue"
+                    },
+                    "numberFormat": {
+                      "unit": 23,
+                      "options": {
+                        "style": "decimal",
+                        "maximumFractionDigits": 2
+                      }
+                    }
+                  }
+                ],
+                "labelSettings": [
+                  {
+                    "columnId": "name",
+                    "label": "Fiori App Name - Semantic Object",
+                    "comment": "Combined app name with SAP semantic object"
+                  }
+                ]
+              }
+            },
+            "conditionalVisibility": {
+              "parameterName": "User",
+              "comparison": "isNotEqualTo"
+            },
+            "name": "ViewsForUser"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let SAPUser = '{User:value}';\r\nlet SAPTAID = '{SAPTechnicalAppComponentID}';\r\npageViews \r\n| extend SAPFioriUserID = tostring(customDimensions.SAPFioriUserID)\r\n| extend User = iff(isempty(SAPFioriUserID), \"Unknown user\", SAPFioriUserID)\r\n| where User == SAPUser\r\n| extend SAPTechnicalAppComponentID = tostring(customDimensions.SAPTechnicalAppComponentID)\r\n| extend SAPAppSupportInfo = tostring(customDimensions.SAPAppSupportInfo)\r\n| extend SAPApplicationType = tostring(customDimensions.SAPApplicationType)\r\n| extend SAPTraceRootID = tostring(customDimensions.SAPTraceRootID)\r\n| extend refUri = tostring(customDimensions.refUri)\r\n| extend viewduration = todouble(customMeasurements.duration)\r\n| where SAPTechnicalAppComponentID == SAPTAID\r\n| project timestamp, name, SAPTechnicalAppComponentID, SAPAppSupportInfo, SAPApplicationType, viewduration, url, SAPTraceRootID",
+              "size": 0,
+              "timeContextFromParameter": "TimeRange",
+              "exportFieldName": "SAPTraceRootID",
+              "exportParameterName": "SAPTraceRootID",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "crossComponentResources": [
+                "{Application}"
+              ],
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "duration",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "palette": "blue"
+                    },
+                    "numberFormat": {
+                      "unit": 23,
+                      "options": {
+                        "style": "decimal",
+                        "maximumFractionDigits": 2
+                      }
+                    }
+                  },
+                  {
+                    "columnMatch": "SAPTraceRootID",
+                    "formatter": 5
+                  }
+                ]
+              }
+            },
+            "conditionalVisibility": {
+              "parameterName": "SAPTechnicalAppComponentID",
+              "comparison": "isNotEqualTo"
+            },
+            "name": "ActionsPerUserPerPage"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "\r\n[Context aware Jump target to SAP WebGUI (external web page)](https://sapides1db.internal.cloudapp.net:44301/sap/bc/gui/sap/its/webgui?~transaction=stad%20selection-rcid={SAPTraceRootID})\r\n\r\n"
+            },
+            "customWidth": "50",
+            "conditionalVisibility": {
+              "parameterName": "SAPTraceRootID",
+              "comparison": "isNotEqualTo"
+            },
+            "name": "LinktoSAP"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "parameters": [
+                {
+                  "id": "faa189cd-ae5f-4b86-a3cf-af23c6e2b42d",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "SAPHostCount",
+                  "type": 2,
+                  "query": "resourcecontainers\r\n| where type == \"microsoft.resources/subscriptions\"\r\n| project subscriptionId, name\r\n| join kind=leftouter (\r\nresources\r\n| where type == \"microsoft.compute/virtualmachines\"\r\n| summarize MachineCount = count() by subscriptionId\r\n) on subscriptionId\r\n| extend MachineCount = iff(isnull(MachineCount), 0, MachineCount)\r\n| project label = subscriptionId, value = MachineCount, selected = true",
+                  "crossComponentResources": [
+                    "{Subscription}"
+                  ],
+                  "isHiddenWhenLocked": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": []
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.resourcegraph/resources"
+            },
+            "customWidth": "50",
+            "name": "saphostcountparam"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "parameters": [
+                {
+                  "id": "1ea6e828-bb86-42fb-9da4-9e53889bfef8",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "SAPHosts",
+                  "type": 5,
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "resources\r\n| where type == \"microsoft.compute/virtualmachines\"\r\n| project value = id, label = name, selected = true",
+                  "crossComponentResources": [
+                    "{Subscription}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": []
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources"
+                }
+              ],
+              "style": "pills",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources"
+            },
+            "conditionalVisibility": {
+              "parameterName": "SAPHostCount",
+              "comparison": "isEqualTo",
+              "value": "0"
+            },
+            "name": "saphostsparam"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Heartbeat\r\n| join (Perf\r\n| where (ObjectName == \"Memory\" and CounterName == \"% Committed Bytes In Use\")\r\n| make-series MemTrend = avg(CounterValue) default=0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by ObjectName, Computer | project MemTrend, Computer) on Computer\r\n| join (Perf\r\n| where (ObjectName == \"Processor\" and CounterName == \"% Processor Time\")\r\n| make-series CPUTrend = avg(CounterValue) default=0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by ObjectName, Computer | project CPUTrend, Computer) on Computer\r\n| join (Perf\r\n| where (ObjectName == \"Network Adapter\" and CounterName == \"Bytes Received/sec\")\r\n| make-series NWRTrend = avg(CounterValue) default=0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by ObjectName, Computer | project NWRTrend, Computer) on Computer\r\n| join (Perf\r\n| where (ObjectName == \"Network Adapter\" and CounterName == \"Bytes Sent/sec\")\r\n| make-series NWSTrend = avg(CounterValue) default=0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by ObjectName, Computer | project NWSTrend, Computer) on Computer\r\n| project Computer, MemTrend, CPUTrend, NWRTrend, NWSTrend",
+              "size": 0,
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.compute/virtualmachines",
+              "crossComponentResources": [
+                "{SAPHosts}"
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "SAPHostCount",
+              "comparison": "isEqualTo",
+              "value": "0"
+            },
+            "name": "SAPHostPerf"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "UserView"
+      },
+      "name": "UserViewGroup"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "Select the user you want to dive into the in the drop down below, and then follow the path.",
+              "style": "info"
+            },
+            "name": "Userview-text"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "crossComponentResources": [
+                "{Application}"
+              ],
+              "parameters": [
+                {
+                  "id": "80385975-c530-4fc2-a633-0da3b895133d",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "TimeRange",
+                  "type": 4,
+                  "typeSettings": {
+                    "selectableValues": [
+                      {
+                        "durationMs": 14400000
+                      },
+                      {
+                        "durationMs": 43200000
+                      },
+                      {
+                        "durationMs": 86400000
+                      },
+                      {
+                        "durationMs": 172800000
+                      },
+                      {
+                        "durationMs": 259200000
+                      },
+                      {
+                        "durationMs": 604800000
+                      },
+                      {
+                        "durationMs": 1209600000
+                      },
+                      {
+                        "durationMs": 2592000000
+                      },
+                      {
+                        "durationMs": 5184000000
+                      },
+                      {
+                        "durationMs": 7776000000
+                      }
+                    ],
+                    "allowCustom": true
+                  },
+                  "value": {
+                    "durationMs": 604800000
+                  }
+                },
+                {
+                  "id": "77ab2871-2a6b-4c3a-8bed-f1c2c912b00b",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "User",
+                  "type": 2,
+                  "isRequired": true,
+                  "query": "pageViews \r\n| extend SAPFioriUserID = tostring(customDimensions.SAPFioriUserID)\r\n| extend User = iff(isempty(SAPFioriUserID), \"Unknown user\", SAPFioriUserID)\r\n| summarize PageCount = count() by User\r\n| order by User asc\r\n| serialize Rank = row_number()\r\n| project value = User, label = strcat(User, \" (👁️‍🗨️\", PageCount, \")\"), selected = iff(Rank == 1, true, false)",
+                  "crossComponentResources": [
+                    "{Application}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": []
+                  },
+                  "timeContext": {
+                    "durationMs": 0
+                  },
+                  "timeContextFromParameter": "TimeRange",
+                  "queryType": 0,
+                  "resourceType": "microsoft.insights/components"
+                },
+                {
+                  "id": "bf26d9ce-c0ee-4258-a909-51c2c124f29b",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "Request",
+                  "type": 2,
+                  "isRequired": true,
+                  "query": "let SAPUser = '{User:value}';\r\ndependencies\r\n| extend User = iff(isempty(user_AuthenticatedId), \"Unknown user\", user_AuthenticatedId)\r\n| where User == SAPUser\r\n| project id",
+                  "crossComponentResources": [
+                    "{Application}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 0
+                  },
+                  "timeContextFromParameter": "TimeRange",
+                  "queryType": 0,
+                  "resourceType": "microsoft.insights/components",
+                  "value": "1429305b08254182"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components"
+            },
+            "name": "RequestView-Parameters"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let SAPUser = '{User:value}';\r\nlet RequestId = '{Request:value}';\r\ndependencies\r\n| extend User = iff(isempty(user_AuthenticatedId), \"Unknown user\", user_AuthenticatedId)\r\n| where User == SAPUser\r\n| where id == RequestId",
+              "size": 0,
+              "timeContextFromParameter": "TimeRange",
+              "exportFieldName": "SAPTechnicalAppComponentID",
+              "exportParameterName": "SAPTechnicalAppComponentID",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "crossComponentResources": [
+                "{Application}"
+              ],
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "AverageDuration",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "palette": "blue"
+                    },
+                    "numberFormat": {
+                      "unit": 23,
+                      "options": {
+                        "style": "decimal",
+                        "maximumFractionDigits": 2
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "conditionalVisibility": {
+              "parameterName": "User",
+              "comparison": "isNotEqualTo"
+            },
+            "name": "ViewsForUser"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let SAPUser = '{User:value}';\r\nlet SAPTAID = '{SAPTechnicalAppComponentID}';\r\npageViews \r\n| extend SAPFioriUserID = tostring(customDimensions.SAPFioriUserID)\r\n| extend User = iff(isempty(SAPFioriUserID), \"Unknown user\", SAPFioriUserID)\r\n| where User == SAPUser\r\n| extend SAPTechnicalAppComponentID = tostring(customDimensions.SAPTechnicalAppComponentID)\r\n| extend SAPAppSupportInfo = tostring(customDimensions.SAPAppSupportInfo)\r\n| extend SAPApplicationType = tostring(customDimensions.SAPApplicationType)\r\n| extend SAPTraceRootID = tostring(customDimensions.SAPTraceRootID)\r\n| extend refUri = tostring(customDimensions.refUri)\r\n| where SAPTechnicalAppComponentID == SAPTAID\r\n| project timestamp, name, SAPTechnicalAppComponentID, SAPAppSupportInfo, SAPApplicationType, duration, performanceBucket, url, SAPTraceRootID",
+              "size": 0,
+              "timeContextFromParameter": "TimeRange",
+              "exportFieldName": "SAPTraceRootID",
+              "exportParameterName": "SAPTraceRootID",
+              "queryType": 0,
+              "resourceType": "microsoft.insights/components",
+              "crossComponentResources": [
+                "{Application}"
+              ],
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "duration",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "palette": "blue"
+                    },
+                    "numberFormat": {
+                      "unit": 23,
+                      "options": {
+                        "style": "decimal",
+                        "maximumFractionDigits": 2
+                      }
+                    }
+                  },
+                  {
+                    "columnMatch": "SAPTraceRootID",
+                    "formatter": 5
+                  }
+                ]
+              }
+            },
+            "conditionalVisibility": {
+              "parameterName": "SAPTechnicalAppComponentID",
+              "comparison": "isNotEqualTo"
+            },
+            "name": "ActionsPerUserPerPage"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "\r\n[Jump target to SAP WebGUI (external web page)](https://sapides1db.internal.cloudapp.net:44301/sap/bc/gui/sap/its/webgui?~transaction=stad%20selection-rcid={SAPTraceRootID})\r\n\r\n"
+            },
+            "customWidth": "50",
+            "conditionalVisibility": {
+              "parameterName": "SAPTraceRootID",
+              "comparison": "isNotEqualTo"
+            },
+            "name": "LinktoSAP"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "parameters": [
+                {
+                  "id": "faa189cd-ae5f-4b86-a3cf-af23c6e2b42d",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "SAPHostCount",
+                  "type": 2,
+                  "query": "resourcecontainers\r\n| where type == \"microsoft.resources/subscriptions\"\r\n| project subscriptionId, name\r\n| join kind=leftouter (\r\nresources\r\n| where type == \"microsoft.compute/virtualmachines\"\r\n| summarize MachineCount = count() by subscriptionId\r\n) on subscriptionId\r\n| extend MachineCount = iff(isnull(MachineCount), 0, MachineCount)\r\n| project label = subscriptionId, value = MachineCount, selected = true",
+                  "crossComponentResources": [
+                    "{Subscription}"
+                  ],
+                  "isHiddenWhenLocked": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": []
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.resourcegraph/resources"
+            },
+            "customWidth": "50",
+            "name": "saphostcountparam"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "parameters": [
+                {
+                  "id": "1ea6e828-bb86-42fb-9da4-9e53889bfef8",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "SAPHosts",
+                  "type": 5,
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "resources\r\n| where type == \"microsoft.compute/virtualmachines\"\r\n| project value = id, label = name, selected = true",
+                  "crossComponentResources": [
+                    "{Subscription}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": []
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources"
+                }
+              ],
+              "style": "pills",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources"
+            },
+            "conditionalVisibility": {
+              "parameterName": "SAPHostCount",
+              "comparison": "isEqualTo",
+              "value": "0"
+            },
+            "name": "saphostsparam"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Heartbeat\r\n| join (Perf\r\n| where (ObjectName == \"Memory\" and CounterName == \"% Committed Bytes In Use\")\r\n| make-series MemTrend = avg(CounterValue) default=0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by ObjectName, Computer | project MemTrend, Computer) on Computer\r\n| join (Perf\r\n| where (ObjectName == \"Processor\" and CounterName == \"% Processor Time\")\r\n| make-series CPUTrend = avg(CounterValue) default=0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by ObjectName, Computer | project CPUTrend, Computer) on Computer\r\n| join (Perf\r\n| where (ObjectName == \"Network Adapter\" and CounterName == \"Bytes Received/sec\")\r\n| make-series NWRTrend = avg(CounterValue) default=0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by ObjectName, Computer | project NWRTrend, Computer) on Computer\r\n| join (Perf\r\n| where (ObjectName == \"Network Adapter\" and CounterName == \"Bytes Sent/sec\")\r\n| make-series NWSTrend = avg(CounterValue) default=0 on TimeGenerated from {TimeRange:start} to {TimeRange:end} step {TimeRange:grain} by ObjectName, Computer | project NWSTrend, Computer) on Computer\r\n| project Computer, MemTrend, CPUTrend, NWRTrend, NWSTrend",
+              "size": 0,
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.compute/virtualmachines",
+              "crossComponentResources": [
+                "{SAPHosts}"
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "SAPHostCount",
+              "comparison": "isEqualTo",
+              "value": "0"
+            },
+            "name": "SAPHostPerf"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "RequestView"
+      },
+      "name": "RequestViewGroup"
+    }
+  ],
+  "fallbackResourceIds": [
+    "Azure Monitor"
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
