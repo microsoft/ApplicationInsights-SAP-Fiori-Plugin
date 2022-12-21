@@ -1,4 +1,4 @@
-# Azure Application Insights SAP-Fiori-Plugin
+# Azure Application Insights SAP-Fiori-Plugin (PREVIEW)
 
 [SAP Fiori Launchpad Plugin](https://assets.cdn.sap.com/sapcom/docs/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.pdf) to gain insights into Fiori metrics with [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview?tabs=net).
 
