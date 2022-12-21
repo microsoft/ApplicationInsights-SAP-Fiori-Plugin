@@ -6,6 +6,8 @@
 
 🧪Tested alpha version with S/4HANA 2021 and Edge Browser.
 
+![Architecture overview](img/overview.png)
+
 ## What to expect from the plugin and usage
 
 Meet the magic wand 🪄. This Fiori Shell plugin shows up on the left next to the SAP logo.
