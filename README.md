@@ -70,7 +70,6 @@ Maintain your [Azure Application Insights Connection String](https://learn.micro
 2. Feed the link to the report **/UI5/UI5_REPOSITORY_LOAD_HTTP** via transaction **SE38** to upload the zip file. For more info, see SAP documentation [Using the SAPUI5 Repository Upload and Download Reports to Synchronize](https://help.sap.com/docs/SAP_NETWEAVER_750/0ce0b8c56fa74dd897fffda8407e8272/a560bd6ed4654fd1b338df065d331872.html) and [SAPUI5 ABAP repos guide](https://sapui5.hana.ondemand.com/sdk/#/topic/91f346786f4d1014b6dd926db0e91070).
 3. Consider running the report in test mode on first try.
 4. Make sure the file contains all artifacts that you require (external libs etc.).
-5. Find the magic wand 🪄 added to your Fiori Home page🧙🏿‍♂️
 
 ### No internet access to reach the zip file? Use file system instead
 
