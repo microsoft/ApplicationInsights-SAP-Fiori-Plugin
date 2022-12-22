@@ -14,10 +14,6 @@ A typical single instance setup would look like below. The reverse proxy is requ
 > **Note**
 > The same approach can be applied to [SAP Build Workzone, standard edition](https://help.sap.com/docs/Launchpad_Service/8c8e1958338140699bd4811b37b82ece/9db48fa44f7e4c62a01bc74c82e74e07.html) (formerly SAP Launchpad Service) hosted on the SAP Business Technology Platform (SAP BTP). Connection to the SAP workload is established via the [SAP Cloud Connector](https://help.sap.com/docs/CP_CONNECTIVITY/cca91383641e40ffbe03bdc78f00f681/e6c7616abb5710148cfcf3e75d96d596.html) (SCC) for any-premises or the [SAP Private Link Service for Azure](https://blogs.sap.com/2021/12/29/getting-started-with-btp-private-link-service-for-azure/).
 
-## What to expect from the plugin and usage
-
-Meet the magic wand 🪄. This Fiori Shell plugin shows up on the left next to the SAP logo.
-
 ## Prerequisites
 
 1. Azure Application Insights instance (access to [connection string](https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string))
@@ -94,10 +90,6 @@ npm run undeploy
 Learn more on the [SAP Fiori Tools Docs](https://help.sap.com/docs/SAP_FIORI_tools/17d50220bcd848aa854c9c182d65b699/70872c402edd425d8612ea722ad81287.html?#undeployment-from-abap).
 
 Or delete from your transport request (transaction SE01), BSP application on ABAP (for example using transaction SE80), and Fiori configuration (transaction /UI2/FLP_CONF_DEF).
-
-## How to Upgrade Azure App Insights SDK
-
-Check the latest version [here](https://learn.microsoft.com/azure/azure-monitor/app/javascript?tabs=snippet#snippet-based-setup) and replicate the code from [CDN](https://js.monitor.azure.com/scripts/b/ai.2.js) for the expanded and minified version into the [libs folder](/webapp/libs).
 
 ## How to deal with Cross-Origin Resource Sharing (CORS) errors
 

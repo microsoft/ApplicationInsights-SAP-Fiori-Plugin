@@ -107,24 +107,8 @@
                 "controlId": "app",
                 "clearControlAggregation": false
             },
-            "routes": [
-                {
-                    "name": "RouteView1",
-                    "pattern": ":?query:",
-                    "target": [
-                        "TargetView1"
-                    ]
-                }
-            ],
-            "targets": {
-                "TargetView1": {
-                    "viewType": "XML",
-                    "transition": "slide",
-                    "clearControlAggregation": false,
-                    "viewId": "View1",
-                    "viewName": "View1"
-                }
-            }
+            "routes": [],
+            "targets": {}
         },
         "rootView": {
             "viewName": "microsoft.com.flpmonitor.view.App",

@@ -7,37 +7,50 @@
  * 
  * Maintain ai.cloud.role tags (see method "sendSAPTraceToAzureAppInsights") to customize Azure App Insights application map
  *---
- * Tested with S4 2021, SAPUI5 1.38+
  *
- * @license Apache-2.0 license, https://github.com/MartinPankraz/az-monitor-sap-fiori-plugin/blob/main/LICENSE
- * @version 0.2
+ * @version 0.5
  * @author  MartinPankraz, https://github.com/MartinPankraz
- * @updated 2022-11-28
- * @link    https://github.com/MartinPankraz/az-monitor-sap-fiori-plugin/blob/main/README.md#changelog
+ * @updated 2022-12-22
+ * @link    https://github.com/microsoft/ApplicationInsights-SAP-Fiori-Plugin#changelog
  *
  * eslint-disable @sap/ui5-jsdocs/no-jsdoc
  */
+!function(T,l,y){var S=T.location,k="script",D="instrumentationKey",C="ingestionendpoint",I="disableExceptionTracking",E="ai.device.",b="toLowerCase",w="crossOrigin",N="POST",e="appInsightsSDK",t=y.name||"appInsights";(y.name||T[e])&&(T[e]=t);var n=T[t]||function(d){var g=!1,f=!1,m={initialize:!0,queue:[],sv:"5",version:2,config:d};function v(e,t){var n={},a="Browser";return n[E+"id"]=a[b](),n[E+"type"]=a,n["ai.operation.name"]=S&&S.pathname||"_unknown_",n["ai.internal.sdkVersion"]="javascript:snippet_"+(m.sv||m.version),{time:function(){var e=new Date;function t(e){var t=""+e;return 1===t.length&&(t="0"+t),t}return e.getUTCFullYear()+"-"+t(1+e.getUTCMonth())+"-"+t(e.getUTCDate())+"T"+t(e.getUTCHours())+":"+t(e.getUTCMinutes())+":"+t(e.getUTCSeconds())+"."+((e.getUTCMilliseconds()/1e3).toFixed(3)+"").slice(2,5)+"Z"}(),iKey:e,name:"Microsoft.ApplicationInsights."+e.replace(/-/g,"")+"."+t,sampleRate:100,tags:n,data:{baseData:{ver:2}}}}var h=d.url||y.src;if(h){function a(e){var t,n,a,i,r,o,s,c,u,p,l;g=!0,m.queue=[],f||(f=!0,t=h,s=function(){var e={},t=d.connectionString;if(t)for(var n=t.split(";"),a=0;a<n.length;a++){var i=n[a].split("=");2===i.length&&(e[i[0][b]()]=i[1])}if(!e[C]){var r=e.endpointsuffix,o=r?e.location:null;e[C]="https://"+(o?o+".":"")+"dc."+(r||"services.visualstudio.com")}return e}(),c=s[D]||d[D]||"",u=s[C],p=u?u+"/v2/track":d.endpointUrl,(l=[]).push((n="SDK LOAD Failure: Failed to load Application Insights SDK script (See stack for details)",a=t,i=p,(o=(r=v(c,"Exception")).data).baseType="ExceptionData",o.baseData.exceptions=[{typeName:"SDKLoadFailed",message:n.replace(/\./g,"-"),hasFullStack:!1,stack:n+"\nSnippet failed to load ["+a+"] -- Telemetry is disabled\nHelp Link: https://go.microsoft.com/fwlink/?linkid=2128109\nHost: "+(S&&S.pathname||"_unknown_")+"\nEndpoint: "+i,parsedStack:[]}],r)),l.push(function(e,t,n,a){var i=v(c,"Message"),r=i.data;r.baseType="MessageData";var o=r.baseData;return o.message='AI (Internal): 99 message:"'+("SDK LOAD Failure: Failed to load Application Insights SDK script (See stack for details) ("+n+")").replace(/\"/g,"")+'"',o.properties={endpoint:a},i}(0,0,t,p)),function(e,t){if(JSON){var n=T.fetch;if(n&&!y.useXhr)n(t,{method:N,body:JSON.stringify(e),mode:"cors"});else if(XMLHttpRequest){var a=new XMLHttpRequest;a.open(N,t),a.setRequestHeader("Content-type","application/json"),a.send(JSON.stringify(e))}}}(l,p))}function i(e,t){f||setTimeout(function(){!t&&m.core||a()},500)}var e=function(){var n=l.createElement(k);n.src=h;var e=y[w];return!e&&""!==e||"undefined"==n[w]||(n[w]=e),n.onload=i,n.onerror=a,n.onreadystatechange=function(e,t){"loaded"!==n.readyState&&"complete"!==n.readyState||i(0,t)},n}();y.ld<0?l.getElementsByTagName("head")[0].appendChild(e):setTimeout(function(){l.getElementsByTagName(k)[0].parentNode.appendChild(e)},y.ld||0)}try{m.cookie=l.cookie}catch(p){}function t(e){for(;e.length;)!function(t){m[t]=function(){var e=arguments;g||m.queue.push(function(){m[t].apply(m,e)})}}(e.pop())}var n="track",r="TrackPage",o="TrackEvent";t([n+"Event",n+"PageView",n+"Exception",n+"Trace",n+"DependencyData",n+"Metric",n+"PageViewPerformance","start"+r,"stop"+r,"start"+o,"stop"+o,"addTelemetryInitializer","setAuthenticatedUserContext","clearAuthenticatedUserContext","flush"]),m.SeverityLevel={Verbose:0,Information:1,Warning:2,Error:3,Critical:4};var s=(d.extensionConfig||{}).ApplicationInsightsAnalytics||{};if(!0!==d[I]&&!0!==s[I]){var c="onerror";t(["_"+c]);var u=T[c];T[c]=function(e,t,n,a,i){var r=u&&u(e,t,n,a,i);return!0!==r&&m["_"+c]({message:e,url:t,lineNumber:n,columnNumber:a,error:i}),r},d.autoExceptionInstrumented=!0}return m}(y.cfg);function a(){y.onInit&&y.onInit(n)}(T[t]=n).queue&&0===n.queue.length?(n.queue.push(a),n.trackPageView({})):a()}(window,document,{
+    src: "https://js.monitor.azure.com/scripts/b/ai.2.min.js", // The SDK URL Source
+    //crossOrigin: "anonymous", // When supplied this will add the provided value as the cross origin attribute on the script tag
+    onInit: function (sdk) {// Once the application insights instance has loaded and initialized this callback function will be called with 1 argument -- the sdk instance (DO NOT ADD anything to the sdk.queue -- As they won't get called)
+        sdk.addTelemetryInitializer(function (envelope) {
+            var insightsName = envelope.name.substring(envelope.name.lastIndexOf(".") + 1);//extract name for convenience
+            const trackedEvents = ["PageviewPerformance","Pageview","Metric"/*,"RemoteDependency"*/];//track only selected events
+            if(trackedEvents.indexOf(insightsName) != -1){
+                //ensure tags exist
+                envelope.tags = envelope.tags || {};
+                envelope.tags["ai.cloud.role"] = "SAP Fiori"; //custom label for Application Map on Azure App Insights
+                envelope.tags["ai.cloud.roleInstance"] = "SAPGW-PM4"; //custom instance label for detailed view
+                //enrich with SAP request metadata
+                envelope.data = envelope.data || {};
+                //TODO: replace with polyfill https://github.com/christiansany/object-assign-polyfill/blob/master/index.js
+                //Object.assign(envelope.data,that.payload);
+            }
+        });
+    },
+    cfg: { // Application Insights Configuration
+        //https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string
+        connectionString: "",
+        //overridePageViewDuration: true,
+        //Automatically track route changes in Single Page Applications (SPA). If true, each route change will send a new Pageview to Application Insights. Hash route changes changes (example.com/foo#bar) are also recorded as new page views
+        //enableAutoRouteTracking: true
+    }
+});
 sap.ui.define([
         "sap/ui/core/UIComponent",
         "sap/ui/Device",
         "sap/ui/performance/trace/Passport",
-        "microsoft/com/flpmonitor/model/models",
-        "sap/ui/model/resource/ResourceModel",
-        "sap/m/MessageToast",
-        "microsoft/com/flpmonitor/libs/ai.2.min"
+        "sap/ui/performance/trace/Interaction",
+        "microsoft/com/flpmonitor/model/models"
     ],
-    function (UIComponent, Device, Passport, models, ResourceModel, MessageToast, myAppInsights) {
+    function (UIComponent, Device, Passport, Interaction, models) {
         "use strict";
-        
-        //switch between "magic wand" button to de/activate tracing manually or always load as soon as possible (required for Home page tracing for instance.)
-        const ENABLE_TRACE_BUTTON_EXPERIENCE        = false;
-        //https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string
-        //Consider reverse proxy for IngestionEndpoint URL in case of CORS challenges
-        const AZURE_APP_INSIGHTS_CONNECTION_STRING  = "";
-        //custom label for Application Map on Azure App Insights
-        const AI_CLOUD_ROLE                         = "SAP Fiori";
-        //custom instance label for detailed view
-        const AI_CLOUD_ROLE_INSTANCE                = "SAPGW-PM4";
 
         return UIComponent.extend("microsoft.com.flpmonitor.Component", {
             metadata: {
@@ -52,145 +65,53 @@ sap.ui.define([
              init: function () {
                 var that = this;
 
-                //Refer to i18n settings here: https://sapui5.hana.ondemand.com/#/topic/df86bfbeab0645e5b764ffa488ed57dc
-                this.i18nModel = new ResourceModel({
-                    bundleName: "microsoft.com.flpmonitor.i18n.i18n"
-                });
-                this.resourceBundle = that.i18nModel.getResourceBundle();
-
-                const TraceInactiveIcon = "sap-icon://activate";
-                const TraceInactiveTooltip = that.resourceBundle.getText("traceInactiveTooltip");
-                const TraceActiveIcon = "sap-icon://record";
-                const TraceActiveTooltip = that.resourceBundle.getText("traceActiveTooltip");
-                
-                this.traceActive = false;
-
                 // call the base component's init function
                 UIComponent.prototype.init.apply(this, arguments);
                 // enable routing
                 this.getRouter().initialize();
                 // set the device model
                 this.setModel(models.createDeviceModel(), "device");
+                //remember which entries were read last from the Interactions array
+                that.indexPointer = 0;
 
-                this.SAPLogonSystem = sap.ushell.Container.getLogonSystem();
-                this.SAPLogonSystem = this.SAPLogonSystem.alias + "-" + this.SAPLogonSystem.platform;
-                //SAPUI5 docs for renderer and shell extensions: https://help.sap.com/docs/ABAP_PLATFORM_BW4HANA/a7b390faab1140c087b8926571e942b7/3e4ba0dbef874eb5a6bc88bb9f0787e5.html?locale=en-US
-                //https://blogs.sap.com/2019/08/12/fiori-launchpad-plugin-extension-with-headeritem-disappears-solution-and-configuration-options/
-                if(ENABLE_TRACE_BUTTON_EXPERIENCE){
-                    var oRenderer = sap.ushell.Container.getRenderer("fiori2");
-                    //add trace button to shell only once!
-                    if(!this.traceButton){
-                        this.traceButton = oRenderer.addHeaderItem({
-                            id: "AppInsightsTraceButton",
-                            icon: TraceInactiveIcon,
-                            ariaLabel: "activate-deactivate-appinsights-trace",
-                            tooltip: TraceActiveTooltip,
-                            visible: true,
-                            press: function (oEvent) {
-                                window.traceActive = (oEvent.getSource().getIcon() == TraceActiveIcon);
-                                //swap state -> if active disable tracing on button press and vice versa
-                                if(window.traceActive){
-                                    window.traceActive = false;//remember state swap
-                                    that.handleAppInsightsLoading(false, that);
-                                    oEvent.getSource().setIcon(TraceInactiveIcon);
-                                    oEvent.getSource().setTooltip(TraceActiveTooltip);
-                                    MessageToast.show(that.resourceBundle.getText("traceInactiveToastMsg"));
-                                }else{
-                                    window.traceActive = true;//remember state swap
-                                    that.handleAppInsightsLoading(true, that);
-                                    that.prepareSAPTraceForAzureAppInsights(that);
-                                    oEvent.getSource().setIcon(TraceActiveIcon);
-                                    oEvent.getSource().setTooltip(TraceInactiveTooltip);
-                                    MessageToast.show(that.resourceBundle.getText("traceActiveToastMsg"));
-                                }
-                            }
-                        }, true, false,[oRenderer.LaunchpadState.Home]);// keep tracing button on home page only!
-                    }
-                }else{
-                    //in case Shell button shall not be used
-                    window.traceActive = true;
-                    that.handleAppInsightsLoading(true, that);
-                    that.prepareSAPTraceForAzureAppInsights(that);
-                }
+                //Called when the Fiori hash is changed
+                //$(window).hashchange(function () {
+                    //ensure listeners are only attached once per session.
+                that.prepareSAPTraceForAzureAppInsights(that);
+                //}.bind(this));
+
             },
-            /**
-             *   Load Azure Application Insights SDK snippet. See API documentation here:
-             *       https://learn.microsoft.com/en-us/azure/azure-monitor/app/javascript?tabs=snippet
-             */
-            handleAppInsightsLoading: function(activate, that){
-                var snippet = {
-                    crossOrigin: "anonymous",//https://github.com/Microsoft/ApplicationInsights-JS#snippet-configuration-options
-                    config: {
-                        connectionString: AZURE_APP_INSIGHTS_CONNECTION_STRING,
-                        /** ...Other Configuration Options...
-                         *   Find the API docs here: https://github.com/microsoft/ApplicationInsights-JS#snippet-setup-ignore-if-using-npm-setup
-                         */
-                        //enableDebug: true,
-                        
-                        // time in milliseconds a user spends on each page On each new page view, the duration the user spent on the previous page is sent as a custom metric named PageVisitTime. This custom metric is viewable in the Metrics Explorer as a log-based metric.
-                        autoTrackPageVisitTime: true,
-                        //enable distributed tracing
-                        distributedTracingMode: 2, // DistributedTracingModes.W3C
-                        //handle state-based route changing that occurs in single page applications
-                        enableAutoRouteTracking: true
-                    }
-                };
-                if(activate){
-                    if(!that.myAppInsights){
-                        that.init = new Microsoft.ApplicationInsights.ApplicationInsights(snippet);
-                        //consider delaying till SAP load duration akquired.
-                        that.myAppInsights = that.init.loadAppInsights();
-                    }
-                }else{//unload App Insights
-                    if(that.myAppInsights){
-                        that.myAppLifeCycle.detachAppLoaded(that.handleFioriAppLoaded, that);
-                        that.init.unload();
-                        that.init = null;
-                        that.myAppInsights = null;
-                    }
-                }
-            },
+
             /**  transmit Fiori app metadata to Azure Application Insights
              *  See API details here: https://learn.microsoft.com/azure/azure-monitor/app/api-custom-events-metrics
              */
             sendSAPTraceToAzureAppInsights: function (appName,that){
-                //don't track if deactivated
-                if(window.traceActive){
-                    //put initializer on the stack only once but feed dynamic objects to handler
-                    if(!that.myInitializer){
-                        var telemetryInitializer = (envelope) => {
-                            var insightsName = envelope.name.substring(envelope.name.lastIndexOf(".") + 1);//extract name for convenience
-                            const trackedEvents = ["PageviewPerformance","Pageview","Metric"/*,"RemoteDependency"*/];//track only selected events
-                            if(trackedEvents.indexOf(insightsName) != -1){
-                                //ensure tags exist
-                                envelope.tags = envelope.tags || {};
-                                envelope.tags["ai.cloud.role"] = AI_CLOUD_ROLE; //custom label for Application Map on Azure App Insights
-                                envelope.tags["ai.cloud.roleInstance"] = AI_CLOUD_ROLE_INSTANCE; //custom instance label for detailed view
-                                //enrich with SAP request metadata
-                                envelope.data = envelope.data || {};
-                                //TODO: replace with polyfill https://github.com/christiansany/object-assign-polyfill/blob/master/index.js
-                                Object.assign(envelope.data,that.payload);
-                            }
-                        };
-                        that.myInitializer = that.myAppInsights.addTelemetryInitializer(telemetryInitializer);
+                var myInteractions = Interaction.getAll();
+                if(that.payload.SAPUID){
+                    for(var i=0;i<myInteractions.length;i++){
+                        if(myInteractions[i].id == that.payload.SAPUID){
+                            console.log("***match***");
+                        }
                     }
-                    //call initializer instead of track to avoid duplicates
-                    /*that.myAppInsights.trackPageView({
-                        name: appName,
-                        properties: that.payload
-                    });*/
                 }
+                var request = {name: appName, properties: that.payload};
+                window.appInsights.trackPageView(request);
             },
+            
             handleFioriAppLoaded: function(oEvent){
                 var that = this;//inject bound this context from attached Fiori app load
                 const _UNKNOWN = "UNKNOWN";
-                var oParameters = oEvent.getParameters();
-                var intent = oParameters.getIntent().then(function(event){
-                    that.payload.SAPsemanticObject = event.semanticObject;
-                })
                 var appManifest = _UNKNOWN;
                 var appID = _UNKNOWN;
                 that.payload = {SAPTraceRootID: that._rootID, SAPTraceTransactionID: that._transactionID, SAPLogonSystem: that.SAPLogonSystem};
+
+                var oParameters = oEvent.getParameters();
+                if(oParameters.componentInstance && oParameters.componentInstance.getMetadata){
+                    that.payload.SAPUID = oParameters.componentInstance.getMetadata()._oManifest._uid;
+                }
+                oParameters.getIntent().then(function(event){
+                    that.payload.SAPsemanticObject = event.semanticObject;
+                });
 
                 var currentApp = that.myAppLifeCycle.getCurrentApplication();
                 that.payload.SAPApplicationType = currentApp.applicationType;//UI5|WDA|NWBC|URL|TR
@@ -251,18 +172,10 @@ sap.ui.define([
                  */
                 if(Passport.getRootId){
                     that._rootID = Passport.getRootId() || _UNKNOWN;
-                }else{
-                    if(jQuery.sap.fesr){
-                        that._rootID = jQuery.sap.fesr.getRootId()|| _UNKNOWN;
-                    }
                 }
 
                 if(Passport.getTransactionId){
                     that._transactionID = Passport.getTransactionId()|| _UNKNOWN;
-                }else{
-                    if(jQuery.sap.fesr){
-                        that._transactionID = jQuery.sap.fesr.getCurrentTransactionId()|| _UNKNOWN;
-                    }
                 }
 
                 /**
@@ -290,7 +203,7 @@ sap.ui.define([
                              *   Consult the "managing personal data" guide Azure Application Insights to learn more about the implications of personal data processing.
                              *       https://learn.microsoft.com/azure/azure-monitor/logs/personal-data-mgmt
                              */
-                            that.myAppInsights.setAuthenticatedUserContext(that._UserID);
+                             window.appInsights.setAuthenticatedUserContext(that._UserID);
                         }
 
                         //register subsequent Fiori app loadings (keep track of user navigations)
