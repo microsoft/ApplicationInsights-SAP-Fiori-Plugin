@@ -26,7 +26,9 @@ Meet the magic wand 🪄. This Fiori Shell plugin shows up on the left next to t
 4. Fiori Launchpad configured to use custom PlugIns. See [SAP's Fiori docs](https://www.sap.com/documents/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.html) (especially steps 76 onwards) to get started.
 
 4a. Launchpad Plugin ID: `ZAZUREFLPPLUGIN`. Or retrieve from builder.customTasks.configuration.app.name in [ui5-deploy.yaml](ui5-deploy.yaml)
+
 4b. Launchpad Plugin URL: `/sap/bc/ui5_ui5/sap/`. Re-use from here or collect from `npm run deploy` output.
+
 4c. UI5 Component ID: `microsoft.com.flpmonitor`. Verify from `sap.app.id` in [manifest.json](/webapp/manifest.json).
 
 > **Note**
