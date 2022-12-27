@@ -18,7 +18,7 @@ A typical single instance setup would look like below. The reverse proxy is requ
 
 1. Azure Application Insights instance (access to [connection string](https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string))
 2. Imported [Azure Monitor Workbook](Fiori-Performance-Analysis.workbook) (Create new, open code view '</>', select Gallery template, copy&paste the json into it and save)
-3. Fiori Launchpad with SAPUI5 1.86+ (older Fiori stacks need to exclude the Interactions library and rely on App Insights configuration `enableAutoRouteTracking` only). Note: you may upgrade your UI5 stack independently from the NetWeaver release.
+3. Fiori Launchpad with SAPUI5 1.86+ (older Fiori stacks need to exclude the [Interactions library](https://sapui5.hana.ondemand.com/sdk/#/api/module:sap/ui/performance/trace/Interaction) and rely on App Insights configuration `enableAutoRouteTracking` only). Note: you may upgrade your UI5 stack independently from the NetWeaver release.
 4. Fiori Launchpad configured to use custom Plug-Ins. See [SAP's Fiori docs](https://www.sap.com/documents/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.html) (especially steps 76 onwards) to get started.
 
 | Parameter   | Value       | Description |
