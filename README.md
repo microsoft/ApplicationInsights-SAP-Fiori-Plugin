@@ -1,15 +1,15 @@
-# Azure Application Insights SAP-Fiori-Plugin (PREVIEW)
+# Azure App Insights SAP-Fiori plugin Quickstart (PREVIEW)
 
-[SAP Fiori Launchpad Plugin](https://assets.cdn.sap.com/sapcom/docs/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.pdf) to gain insights into Fiori metrics with [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview?tabs=net).
+This repos describes how to utilize a [SAP Fiori Launchpad Plugin](https://assets.cdn.sap.com/sapcom/docs/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.pdf) to gain **client-side insights** into Fiori metrics with [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview?tabs=net). It leverages the standard views for Azure Application Insights and a dedicated Azure Monitor Workbook for SAP.
 
 > **Note**
 > Find official API documentation for the Azure Application Insights JS snippet [here](https://github.com/microsoft/ApplicationInsights-JS#snippet-setup-ignore-if-using-npm-setup).
 
-🧪Tested with Business Suite NW 7.51 and S/4HANA 2022 using Edge Browser.
-
 A typical single instance setup would look like below. The reverse proxy is required in case of strict [CORS policies](https://github.com/microsoft/ApplicationInsights-SAP-Fiori-Plugin#how-to-deal-with-cross-origin-resource-sharing-cors-errors). Proxy choices range from managed services like [Azure Front Door](https://learn.microsoft.com/azure/frontdoor/front-door-overview) or [Azure Application Gateway](https://learn.microsoft.com/azure/application-gateway/overview) to self-hosted solutions like Apache.
 
 ![Architecture overview](img/overview.png)
+
+🧪Tested with Business Suite NW 7.51 and S/4HANA 2022 using Edge Browser.
 
 > **Note**
 > The same approach can be applied to [SAP Build Workzone, standard edition](https://help.sap.com/docs/Launchpad_Service/8c8e1958338140699bd4811b37b82ece/9db48fa44f7e4c62a01bc74c82e74e07.html) (formerly SAP Launchpad Service) hosted on the SAP Business Technology Platform (SAP BTP). Connection to the SAP workload is established via the [SAP Cloud Connector](https://help.sap.com/docs/CP_CONNECTIVITY/cca91383641e40ffbe03bdc78f00f681/e6c7616abb5710148cfcf3e75d96d596.html) (SCC) for any-premises or the [SAP Private Link Service for Azure](https://blogs.sap.com/2021/12/29/getting-started-with-btp-private-link-service-for-azure/).
@@ -18,8 +18,8 @@ A typical single instance setup would look like below. The reverse proxy is requ
 
 1. Azure Application Insights instance (access to [connection string](https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string))
 2. Imported [Azure Monitor Workbook](Fiori-Performance-Analysis.workbook) (Create new, open code view '</>', select Gallery template, copy&paste the json into it and save)
-3. Fiori Launchpad with SAPUI5 1.71.39+
-4. Fiori Launchpad configured to use custom PlugIns. See [SAP's Fiori docs](https://www.sap.com/documents/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.html) (especially steps 76 onwards) to get started.
+3. Fiori Launchpad with SAPUI5 1.86+ (older Fiori stacks need to exclude the Interactions library and rely on App Insights configuration `enableAutoRouteTracking` only). Note: you may upgrade your UI5 stack independently from the NetWeaver release.
+4. Fiori Launchpad configured to use custom Plug-Ins. See [SAP's Fiori docs](https://www.sap.com/documents/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.html) (especially steps 76 onwards) to get started.
 
 | Parameter   | Value       | Description |
 | ----------- | ----------- | ----------- |
