@@ -72,10 +72,10 @@ cfg: {
 }
 ```
 
-and something like this on the reverse proxy (pseudo code):
+and something like this on the reverse proxy with a **special port** to identify this special rewrite scenario (pseudo code):
 
 ```cmd
-<If "%{HTTP_HOST} == '<your-reverse-proxy-hostname>'">
+<If "%{HTTP_HOST} == '<your-reverse-proxy-hostname>' && %{SERVER_PORT} -eq 7777">
     Redirect "/" "https://<your azure app insights domain>/"
 </If>
 ```
