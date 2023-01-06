@@ -18,7 +18,7 @@ A typical single instance setup would look like below. The reverse proxy is requ
 
 1. Azure Application Insights instance (access to [connection string](https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string))
 2. Imported [Azure Monitor Workbook](Fiori-Performance-Analysis.workbook) (Create new, open code view '</>', select Gallery template, copy&paste the json into it and save)
-3. Fiori Launchpad with SAPUI5 1.86+ (older Fiori stacks need to exclude the [Interactions library](https://sapui5.hana.ondemand.com/sdk/#/api/module:sap/ui/performance/trace/Interaction) and rely on App Insights configuration `enableAutoRouteTracking` only). Note: you may upgrade your UI5 stack independently from the NetWeaver release.
+3. Fiori Launchpad with SAPUI5 1.86+ (older Fiori stacks need to exclude the [Interactions library](https://sapui5.hana.ondemand.com/sdk/#/api/module:sap/ui/performance/trace/Interaction) and rely on App Insights configuration `enableAutoRouteTracking` only). _Note: you may upgrade your UI5 stack independently from the NetWeaver release._
 4. Fiori Launchpad configured to use custom Plug-Ins. See [SAP's Fiori docs](https://www.sap.com/documents/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.html) (especially steps 76 onwards) to get started.
 
 | Parameter   | Value       | Description |
@@ -52,53 +52,41 @@ npm run build
 npm start
 ```
 
-## Deployment to AS ABAP from Business Application Studio
+## Deploying the plugin
 
-Deploy the plugin to your ABAP repos from SAP Business Application Studio using below command (assuming configured SAP Cloud Connector, SAP Private Link Service, Azure API Management or other Gateway). Project assumes existing destination setup as per [ui5-deploy.yaml](https://github.com/MartinPankraz/az-monitor-sap-fiori-plugin/blob/main/ui5-deploy.yaml). Learn more on the [SAP Fiori Tools docs](https://help.sap.com/docs/SAP_FIORI_tools/17d50220bcd848aa854c9c182d65b699/607014e278d941fda4440f92f4a324a6.html?#deployment-to-abap).
+There are multiple ways to deploy the plugin to AS ABAP. Learn more [here](documentation/DEPLOYMENT.md)
 
-```cmd
-npm run deploy
-```
-
-## (Alternative) Deployment to AS ABAP with URL to ZIP file
-
-This repos uses [ui5-task-zipper](https://github.com/ui5-community/ui5-ecosystem-showcase/tree/main/packages/ui5-task-zipper) that is [available via npm](https://www.npmjs.com/package/ui5-task-zipper) to create a zip file for your convenience. For more info about the zip file upload process, see [this](https://sapui5.hana.ondemand.com/sdk/docs/topics/a560bd6ed4654fd1b338df065d331872.html) SAPUI5 docs entry.
-
-Maintain your [Azure Application Insights Connection String](https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string) on the [Component.js](https://github.com/MartinPankraz/az-monitor-sap-fiori-plugin/blob/main/webapp/Component.js#L36).
-
-1. Supply the build result via a URL. One option would be hosting it here on the GitHub repos as zazureflpplugin.zip file. To do so move it from the dist folder after build and commit.
-2. Feed the link to the report **/UI5/UI5_REPOSITORY_LOAD_HTTP** via transaction **SE38** to upload the zip file. For more info, see SAP documentation [Using the SAPUI5 Repository Upload and Download Reports to Synchronize](https://help.sap.com/docs/SAP_NETWEAVER_750/0ce0b8c56fa74dd897fffda8407e8272/a560bd6ed4654fd1b338df065d331872.html) and [SAPUI5 ABAP repos guide](https://sapui5.hana.ondemand.com/sdk/#/topic/91f346786f4d1014b6dd926db0e91070).
-3. Consider running the report in test mode on first try.
-4. Make sure the file contains all artifacts that you require (external libs etc.).
-
-### No internet access to reach the zip file? Use file system instead
-
-1. Store the zip where your SAPGUI has access to.
-2. Open [Component.js](https://github.com/MartinPankraz/az-monitor-sap-fiori-plugin/blob/main/webapp/Component.js#L36) and replace placeholder 'YOUR-CONNECTION-STRING' with your [Azure Application Insights Connection String](https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string).
-3. Utilize report **/UI5/UI5_REPOSITORY_LOAD** instead of http to upload.
-
-> **Note**
-> Working on adding the zipping process to the build process for ease of use with [this](https://github.com/ui5-community/ui5-ecosystem-showcase/tree/main/packages/ui5-task-zipper) community extension.
-
-## Undeploy and clean up of the plugin from your AS ABAP system
-
-```cmd
-npm run undeploy
-```
-
-Learn more on the [SAP Fiori Tools Docs](https://help.sap.com/docs/SAP_FIORI_tools/17d50220bcd848aa854c9c182d65b699/70872c402edd425d8612ea722ad81287.html?#undeployment-from-abap).
-
-Or delete from your transport request (transaction SE01), BSP application on ABAP (for example using transaction SE80), and Fiori configuration (transaction /UI2/FLP_CONF_DEF).
+> **Note** - The provided guidance focuses on AS ABAP but the plugin also applies to the SAP Build Workzone, standard edition (formerly SAP Launchpad service). Learn more [here](https://developers.sap.com/tutorials/sapui5-fiori-cf-deploy.html).
 
 ## How to deal with Cross-Origin Resource Sharing (CORS) errors
 
 Consider the `crossOrigin` setting of the App Insights [configuration](https://github.com/MartinPankraz/az-monitor-sap-fiori-plugin/blob/main/webapp/Component.js). Read more about it [here](https://learn.microsoft.com/azure/azure-monitor/app/javascript?tabs=snippet#configuration).
 
-In case relaxation of the CORS policy is not an option, consider adding a reverse proxy. This is a standard practice with SAP Fiori integration with SAP Business Objects for instance. To do so adjust the hostname accordingly on the App Insights SDK by changing the [connection string](/webapp/Component.js#L36).
+In case relaxation of the CORS policy is not an option, consider adding a reverse proxy. This is a standard practice with SAP Fiori integration with SAP Business Objects for instance. To do so adjust the hostname accordingly on the App Insights SDK by changing the [connection string](/webapp/Component.js#L40).
+
+It would look something like this on the [Component.js](/webapp/Component.js#L40):
+
+```cmd
+cfg: { 
+    connectionString:"InstrumentationKey=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;IngestionEndpoint=https://<your-reverse-proxy-hostname>/v2/track"
+}
+```
+
+and something like this on the reverse proxy (pseudo code):
+
+```cmd
+<If "%{HTTP_HOST} == '<your-reverse-proxy-hostname>'">
+    Redirect "/" "https://<your azure app insights domain>/"
+</If>
+```
+
+> **Note** - Learn more about the setup with Azure Application Gateway [here](https://learn.microsoft.com/azure/application-gateway/url-route-overview) and for Azure Front Door [here](https://learn.microsoft.com/azure/frontdoor/front-door-route-matching?pivots=front-door-standard-premium).
+
+> **Note** - Learn more about overriding the SAP standard regarding CORS settings on the Fiori layer in this [blog post](https://blogs.sap.com/2022/08/02/embed-self-hosted-sap-fiori-launchpad-into-microsoft-teams/).
 
 ## Troubleshooting hints
 
-Use the hot-key `CTRL+SHIFT+ALT+S` provided for SAPUI5 to [enable debug mode](https://sapui5.hana.ondemand.com/sdk/#/topic/c9b0f8cca852443f9b8d3bf8ba5626ab.html#loioc9b0f8cca852443f9b8d3bf8ba5626ab) from your Fiori Launchpad instance to load the non-minified sources for this plugin and the Azure App Insights SDK.
+Use the hot-key <kbd>CTRL</kbd>+<kbd>SHIFT</kbd>+<kbd>ALT</kbd>+<kbd>S</kbd> provided for SAPUI5 to [enable debug mode](https://sapui5.hana.ondemand.com/sdk/#/topic/c9b0f8cca852443f9b8d3bf8ba5626ab.html#loioc9b0f8cca852443f9b8d3bf8ba5626ab) from your Fiori Launchpad instance to load the non-minified sources for this plugin and the Azure App Insights SDK.
 
 ### Changelog
 
