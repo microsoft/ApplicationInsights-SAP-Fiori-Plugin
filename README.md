@@ -17,7 +17,7 @@ A typical single instance setup would look like below. The reverse proxy is requ
 ## Prerequisites
 
 1. Azure Application Insights instance (access to [connection string](https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string))
-2. Imported [Azure Monitor Workbook](Fiori-Performance-Analysis.workbook) (Create new, open code view '</>', select Gallery template, copy&paste the json into it and save)
+2. Imported [Azure Monitor Workbook](Fiori-Performance-Analysis.workbook) (Create new, open code view <kbd></></kbd>, select Gallery template, copy & paste the json into it and save)
 3. Fiori Launchpad with SAPUI5 1.86+ (older Fiori stacks need to consider [alternatives](#sapui5-feature-dependencies)).
 
 > **Note** - you may upgrade your UI5 stack independently from the NetWeaver release
