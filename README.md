@@ -18,7 +18,7 @@ A typical single instance setup would look like below. The reverse proxy is requ
 
 1. Azure Application Insights instance (access to [connection string](https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string))
 2. Imported [Azure Monitor Workbook](Fiori-Performance-Analysis.workbook) (Create new, open code view '</>', select Gallery template, copy&paste the json into it and save)
-3. Fiori Launchpad with minimum SAPUI5 1.76+ (older Fiori stacks need to exclude the [Interactions library](https://sapui5.hana.ondemand.com/sdk/#/api/module:sap/ui/performance/trace/Interaction) and rely on query string hash changes or App Insights configuration `enableAutoRouteTracking`).
+3. Fiori Launchpad with SAPUI5 1.86+ (older Fiori stacks need to consider [alternatives](#sapui5-feature-dependencies)).
 
 > **Note** - you may upgrade your UI5 stack independently from the NetWeaver release
 
@@ -51,6 +51,8 @@ $(window).hashchange(function () {
     window.appInsights.trackPageView();
 }
 ```
+
+Another alternative poses the App Insights configuration `enableAutoRouteTracking`. However, launchpad navigation durations are not reflected, because it gets treated as a large single-page-application (SPA).
 
 ## Local build instructions (SAP Business Application Studio)
 
