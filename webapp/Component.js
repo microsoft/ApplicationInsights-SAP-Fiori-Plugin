@@ -89,7 +89,6 @@ sap.ui.define([
              */
             sendSAPTraceToAzureAppInsights: function (appName,that){
                 var myInteractions = Interaction.getAll();
-                var request = {name: appName};
                 
                 //id of last forwarded interaction
                 var idx = myInteractions.findIndex(el => el.id === that.lastReportedInteractionId)
@@ -99,12 +98,21 @@ sap.ui.define([
                     //exclude last item
                     that.indexPointer = idx + 1;
                 }
+
                 //report collected session Interactions (continous array per session) correlated with "app-loaded event" to App Insights manually
                 for(var i=that.indexPointer;i<myInteractions.length;i++){
-                    var element = myInteractions[i];
 
+                    var request = {};
+                    var element = myInteractions[i];
+                    var date = new Date(element.start);
+                    
                     //supply standard duration field
                     that.payload.duration = element.duration || null;
+
+                    //write custom start time
+                    request.time = date.toISOString();
+                    request.name = element.stepComponent || element.component
+
                     //map custom fields
                     that.payload.SAPinteractionBytesReceived = element.bytesReceived || null;
                     that.payload.SAPinteractionBytesSent = element.bytesSent || null;
