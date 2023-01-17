@@ -37,7 +37,7 @@ var that;
     },
     cfg: { // Application Insights Configuration
         //https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string
-        connectionString: "CONNECTION-STRING",
+        connectionString: "InstrumentationKey=36c6bd94-6a75-4cd9-b3d8-4864a08082e5;IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/",
         //overridePageViewDuration: true,
         //Automatically track route changes in Single Page Applications (SPA). If true, each route change will send a new Pageview to Application Insights. Hash route changes changes (example.com/foo#bar) are also recorded as new page views
         enableAutoRouteTracking: false
@@ -111,7 +111,7 @@ sap.ui.define([
 
                     //write custom start time
                     request.time = date.toISOString();
-                    request.name = element.stepComponent || element.component
+                    request.name = element.stepComponent || element.component;
 
                     //map custom fields
                     that.payload.SAPinteractionBytesReceived = element.bytesReceived || null;
