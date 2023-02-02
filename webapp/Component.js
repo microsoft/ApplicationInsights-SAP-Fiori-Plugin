@@ -118,7 +118,8 @@ sap.ui.define([
                     that.payload.SAPinteractionComponent = element.component || null;
                     
                     request.properties = that.payload;
-                    window.appInsights.trackPageView(request);      
+                    //track Fiori interactions as custom event
+                    window.appInsights.trackEvent(request);   
                     //remember last forwarded interaction to iterate interactions array continously according to its lifecycle
                     that.lastReportedInteractionId = element.id;
                 }

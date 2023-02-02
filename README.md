@@ -19,8 +19,11 @@ A typical single instance setup would look like below. The plugin concept applie
 ## Prerequisites
 
 1. Azure Application Insights instance (access to [connection string](https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string))
-2. Imported [Azure Monitor Workbook](Fiori-Performance-Analysis.workbook) (Create new, open code view '</>', select Gallery template, copy&paste the json into it and save)
-3. Fiori Launchpad with SAPUI5 1.86+ (older Fiori stacks need to exclude the [Interactions library](https://sapui5.hana.ondemand.com/sdk/#/api/module:sap/ui/performance/trace/Interaction) and rely on App Insights configuration `enableAutoRouteTracking` only). _Note: you may upgrade your UI5 stack independently from the NetWeaver release._
+2. Imported [Azure Monitor Workbook](Fiori-Performance-Analysis.workbook) (Create new, open code view <kbd></></kbd>, select Gallery template, copy & paste the json into it and save)
+3. Fiori Launchpad with SAPUI5 1.86+ (older Fiori stacks need to consider [alternatives](#sapui5-feature-dependencies)).
+
+> **Note** - you may upgrade your UI5 stack independently from the NetWeaver release
+
 4. Fiori Launchpad configured to use custom Plug-Ins. See [SAP's Fiori docs](https://www.sap.com/documents/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.html) (especially steps 76 onwards) to get started.
 
 | Parameter   | Value       | Description |
@@ -31,6 +34,27 @@ A typical single instance setup would look like below. The plugin concept applie
 
 > **Note**
 > Optionally add Azure Monitor for SAP Solutions Instance for infrastructure telemetery correlation
+
+### SAPUI5 feature dependencies
+
+Default settings of this repos anticipate UI5 releases 1.86+. Use below table to understand potential feature scope for older releases.
+
+| Feature   | SAPUI5 release       | Usage |
+| ----------- | ----------- | ----------- |
+| [Interaction](https://sapui5.hana.ondemand.com/sdk/#/api/module:sap/ui/performance/trace/Interaction)  | 1.76+ | Use SAP public tracing APIs for analysis, matching SAP backend trace measurments |
+| [User Info](https://sapui5.hana.ondemand.com/sdk/#/api/sap.ushell.services.UserInfo%23methods/Summary)  | 1.86+ | Use SAP's public Fiori user API to correlate user info |
+| [Passport](https://help.sap.com/docs/ABAP_PLATFORM_NEW/468a97775123488ab3345a0c48cadd8f/a075ed88ef324261bca41813a6ac4a1c.html)  | n.a. | Use SAP's internal API to enrich requests with RootId and TransactionId for deep linking from Azure into SAP backend transactions |
+
+If none are applicable revert to tracking Fiori hash changes only:
+
+```javascript
+//uncomment in init function
+$(window).hashchange(function () {
+    window.appInsights.trackPageView();
+}
+```
+
+Another alternative poses the App Insights configuration `enableAutoRouteTracking`. However, launchpad navigation durations are not reflected, because it gets treated as a large single-page-application (SPA).
 
 ## Local build instructions (SAP Business Application Studio)
 
