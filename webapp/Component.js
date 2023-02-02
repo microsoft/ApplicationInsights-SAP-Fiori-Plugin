@@ -233,19 +233,22 @@ sap.ui.define([
                     //exclude last item
                     that.indexPointer = idx + 1;
                 }
-                
+
+                var request;
+                var element;
+                var date;
                 //report collected session Interactions (continous array per session) correlated with "app-loaded event" to App Insights manually
                 for(var i=that.indexPointer;i<myInteractions.length;i++){
 
-                    var request = {};
-                    var element = myInteractions[i];
-                    var date = new Date(element.start);
+                    request = {};
+                    element = myInteractions[i];
+                    date = new Date(element.start);
 
                     // if there is more that one interaction, we use the application context data which is still present.
                     // only on reaching
                     if (i==(myInteractions.length - 1)){
                         that.prepareSAPApplicationData(that, appName);
-                        that.payload.sapSemanticObject = that.sapSemanticObject || null;
+                        that.payload.SAPSemanticObject = that.sapSemanticObject || null;
                     }
 
                     // session scoped data
@@ -255,9 +258,7 @@ sap.ui.define([
 
                     // event scoped data
                     that.payload.appID = that.appID || null;
-                    that.payload.appNameID = that.appID || null;
-                    that.payload.appID = that.appID || null;
-                    that.payload.applicationType = that.applicationType || null;
+                    that.payload.appType = that.applicationType || null;
                     that.payload.technicalAppComponentID = that.technicalAppComponentID || null; 
                     that.payload.appSupportInfo = that.appSupportInfo || null;
                     that.payload.appIntent = that.appIntent || null;
@@ -276,7 +277,7 @@ sap.ui.define([
                     that.payload.SAPinteractionNetworkTime = element.networkTime || null;
                     that.payload.SAPinteractionProcessingTime = element.processing || null;
                     that.payload.SAPinteractionRequestTime = element.requestTime || null;
-                    that.payload.SAPRoundTrips = element.completeRoundtrips || null;
+                    that.payload.SAPinteractionRoundTrips = element.completeRoundtrips || null;
                     that.payload.SAPinteractionEvent = element.event || null;
                     that.payload.SAPinteractionTrigger = element.trigger || null;
                     that.payload.SAPinteractionComponent = element.component || null;
