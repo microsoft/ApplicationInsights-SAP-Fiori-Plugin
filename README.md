@@ -5,14 +5,16 @@ This repos describes how to utilize a [SAP Fiori Launchpad Plugin](https://asset
 > **Note**
 > Find official API documentation for the Azure Application Insights JS snippet [here](https://github.com/microsoft/ApplicationInsights-JS#snippet-setup-ignore-if-using-npm-setup).
 
-A typical single instance setup would look like below. The reverse proxy is required in case of strict [CORS policies](https://github.com/microsoft/ApplicationInsights-SAP-Fiori-Plugin#how-to-deal-with-cross-origin-resource-sharing-cors-errors). Proxy choices range from managed services like [Azure Front Door](https://learn.microsoft.com/azure/frontdoor/front-door-overview) or [Azure Application Gateway](https://learn.microsoft.com/azure/application-gateway/overview) to self-hosted solutions like Apache.
+A typical single instance setup would look like below. The plugin concept applies to native SAP on Azure deployments, SAP RISE, on-premises and [SAP BTP Build WorkZone, Standard edition](https://help.sap.com/docs/Launchpad_Service/8c8e1958338140699bd4811b37b82ece/9db48fa44f7e4c62a01bc74c82e74e07.html).
+
+> **Note**
+> Connection from BTP to the SAP workload on Azure can be done with the cloud-native [SAP Private Link Service for Azure](https://blogs.sap.com/2021/12/29/getting-started-with-btp-private-link-service-for-azure/) or the [SAP Cloud Connector](https://help.sap.com/docs/CP_CONNECTIVITY/cca91383641e40ffbe03bdc78f00f681/e6c7616abb5710148cfcf3e75d96d596.html) (SCC). For any-premises choose Azure VNet integration via [ExpressRoute](https://learn.microsoft.com/azure/expressroute/expressroute-introduction)/VPN or the SCC.
 
 ![Architecture overview](img/overview.png)
 
-🧪Tested with Business Suite NW 7.51 and S/4HANA 2022 using Edge Browser.
+> **Note** - The reverse proxy is required in case of strict [CORS policies](https://github.com/microsoft/ApplicationInsights-SAP-Fiori-Plugin#how-to-deal-with-cross-origin-resource-sharing-cors-errors). Proxy choices range from managed services like [Azure Front Door](https://learn.microsoft.com/azure/frontdoor/front-door-overview) or [Azure Application Gateway](https://learn.microsoft.com/azure/application-gateway/overview) to self-hosted solutions like Apache.
 
-> **Note**
-> The same approach can be applied to [SAP Build Workzone, standard edition](https://help.sap.com/docs/Launchpad_Service/8c8e1958338140699bd4811b37b82ece/9db48fa44f7e4c62a01bc74c82e74e07.html) (formerly SAP Launchpad Service) hosted on the SAP Business Technology Platform (SAP BTP). Connection to the SAP workload is established via the [SAP Cloud Connector](https://help.sap.com/docs/CP_CONNECTIVITY/cca91383641e40ffbe03bdc78f00f681/e6c7616abb5710148cfcf3e75d96d596.html) (SCC) for any-premises or the [SAP Private Link Service for Azure](https://blogs.sap.com/2021/12/29/getting-started-with-btp-private-link-service-for-azure/).
+🧪Tested with Business Suite NW 7.51 and S/4HANA 2022 using Edge Browser.
 
 ## Prerequisites
 

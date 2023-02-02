@@ -1,6 +1,6 @@
 # Deployment options for the Fiori Launchpad plugin
 
-There are multiple ways to deploy the plugin. This section focuses on AS ABAP but it would also apply to the SAP Build Workzone, standard edition (formerly SAP Launchpad service).
+There are multiple ways to deploy the plugin. This section focuses on AS ABAP but it would also apply to the SAP Build WorkZone, standard edition (formerly SAP Launchpad service).
 
 ## Deployment to AS ABAP from Business Application Studio
 
