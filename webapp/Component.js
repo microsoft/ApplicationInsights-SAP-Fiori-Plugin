@@ -37,12 +37,13 @@ var that;
     },
     cfg: { // Application Insights Configuration
         //https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string?tabs=net#find-your-connection-string
-        connectionString: "CONNECTION-STRING",
+        connectionString: "YOURCONNECTIONSTRING",
         //overridePageViewDuration: true,
         //Automatically track route changes in Single Page Applications (SPA). If true, each route change will send a new Pageview to Application Insights. Hash route changes changes (example.com/foo#bar) are also recorded as new page views
         enableAutoRouteTracking: false
     }
 });
+
 sap.ui.define([
         "sap/ui/core/UIComponent",
         "sap/ui/Device",
@@ -63,7 +64,7 @@ sap.ui.define([
              * @public
              * @override
              */
-             init: function () {
+            init: function () {
                 that = this;
 
                 // call the base component's init function
@@ -72,144 +73,62 @@ sap.ui.define([
                 this.getRouter().initialize();
                 // set the device model
                 this.setModel(models.createDeviceModel(), "device");
-                //remember which entries were read last from the Interactions array
+                // remember which entries were read last from the Interactions array
                 that.indexPointer = 0;
                 that.lastReportedInteractionId = null;
 
-                //Called when the Fiori hash is changed
-                //$(window).hashchange(function () {
-                    //ensure listeners are only attached once per session.
-                that.prepareSAPTraceForAzureAppInsights(that);
-                //}.bind(this));
+                // remember which application was last reported along with the Interactions
+                that.lastReportedApplication = null;
+                that.prepareSAPSessionData(that);
+                that.registerFioriAppLoaded(that);
 
             },
 
-            /**  transmit Fiori app metadata to Azure Application Insights
-             *  See API details here: https://learn.microsoft.com/azure/azure-monitor/app/api-custom-events-metrics
-             */
-            sendSAPTraceToAzureAppInsights: function (appName,that){
-                var myInteractions = Interaction.getAll();
-                var request = {name: appName};
-                
-                //id of last forwarded interaction
-                var idx = myInteractions.findIndex(el => el.id === that.lastReportedInteractionId)
-                if (idx == -1){
-                    that.indexPointer = 0;
-                }else{
-                    //exclude last item
-                    that.indexPointer = idx + 1;
-                }
-                //report collected session Interactions (continous array per session) correlated with "app-loaded event" to App Insights manually
-                for(var i=that.indexPointer;i<myInteractions.length;i++){
-                    var element = myInteractions[i];
-
-                    //supply standard duration field
-                    that.payload.duration = element.duration || null;
-                    //map custom fields
-                    that.payload.SAPinteractionBytesReceived = element.bytesReceived || null;
-                    that.payload.SAPinteractionBytesSent = element.bytesSent || null;
-                    that.payload.SAPinteractionNavigationTime = element.navigation || null;
-                    that.payload.SAPinteractionNetworkTime = element.networkTime || null;
-                    that.payload.SAPinteractionProcessingTime = element.processing || null;
-                    that.payload.SAPinteractionRequestTime = element.requestTime || null;
-                    that.payload.SAPRoundTrips = element.completeRoundtrips || null;
-                    that.payload.SAPinteractionEvent = element.event || null;
-                    that.payload.SAPinteractionTrigger = element.trigger || null;
-                    that.payload.SAPinteractionComponent = element.component || null;
-                    
-                    request.properties = that.payload;
-                    //track Fiori interactions as custom event
-                    window.appInsights.trackEvent(request);   
-                    //remember last forwarded interaction to iterate interactions array continously according to its lifecycle
-                    that.lastReportedInteractionId = element.id;
-                }
-                
-            },
-            
             handleFioriAppLoaded: function(oEvent){
                 var that = this;//inject bound this context from attached Fiori app load
-                const _UNKNOWN = "UNKNOWN";
-                var appManifest = _UNKNOWN;
-                var appID = _UNKNOWN;
-                that.payload = {SAPTraceRootID: that._rootID, SAPTraceTransactionID: that._transactionID, SAPLogonSystem: that.SAPLogonSystem};
+                
+                // that.payload = {SAPTraceRootID: that._rootID, SAPTraceTransactionID: that._transactionID, SAPLogonSystem: that.SAPLogonSystem};
 
                 var oParameters = oEvent.getParameters();
                 oParameters.getIntent().then(function(event){
-                    that.payload.SAPsemanticObject = event.semanticObject;
+                    that.sapSemanticObject = event.semanticObject;
                 });
+                var loadedApp = that.myAppLifeCycle.getCurrentApplication();
+                that.sendSAPPayloadToAzureAppInsights(that, loadedApp);
 
-                var currentApp = that.myAppLifeCycle.getCurrentApplication();
-                that.payload.SAPApplicationType = currentApp.applicationType;//UI5|WDA|NWBC|URL|TR
-                that.payload.SAPFioriUserID = that._UserID;
-                that.payload.SAPFioriUserEmail = that._UserEmail;
-                that.payload.SAPFioriUserFullName = that._UserFullName;
-
-                //leverage getInfo promise if available
-                if(currentApp.getInfo){
-                    currentApp.getInfo(["appId","technicalAppComponentId","appSupportInfo","productName","appIntent"]).then(
-                        function(info){
-                            if(info.appId){
-                                appID = info.appId;
-                            }else{
-                                //default to componentId in case no appId (e.g. apps of type NWBC does't have one)
-                                appID = info.technicalAppComponentId || _UNKNOWN;
-                            }
-                            that.payload.SAPTechnicalAppComponentID = info.technicalAppComponentId || _UNKNOWN;
-                            that.payload.SAPAppSupportInfo = info.appSupportInfo || _UNKNOWN;
-                            if(info.productName){
-                                that.payload.SAPProductName = info.productName;   
-                            }
-                            that.payload.SAPAppIntent = info.appIntent || _UNKNOWN;
-
-                            that.sendSAPTraceToAzureAppInsights(appID,that);
-                        },
-                        function(error){
-                            console.log(error);
-                        }
-                    );
-                }else if(currentApp.componentInstance){
-                    //only available for UI5
-                    appManifest = currentApp.componentInstance.getManifest()["sap.app"];
-                    appID = appManifest.id;
-                    //Get SAP app component hierarchy
-                    if(appManifest.ach){
-                        that.payload.SAPTechnicalAppComponentID = appManifest.ach;
-                    }
-
-                    that.sendSAPTraceToAzureAppInsights(appID,that);
-                }else{
-                    //other cases? adjust defaults?
-                    console.log("Unhandled SAP app type. Please open an Issue at https://github.com/MartinPankraz/az-monitor-sap-fiori-plugin");
-                }
             },
+
+            registerFioriAppLoaded: function(that){
+                //register subsequent Fiori app loadings (keep track of user navigations)
+                sap.ushell.Container.getServiceAsync("AppLifeCycle").then(function(AppLifeCycleService) {         
+                    that.myAppLifeCycle = AppLifeCycleService;
+                    //act on each Fiori app load and bind "this" context by injecting "that"
+                        that.myAppLifeCycle.attachAppLoaded(that.handleFioriAppLoaded,that);
+                });
+            },
+
             /**
-             * Hook into sap.ushell.Container to get UserInfo and app life cycle to enrich tracked Azure AppInsights requests
-             */
-            prepareSAPTraceForAzureAppInsights: function (that){
+             * Hook into sap.ushell.Container to get UserInfo, maintain for later use
+             * 
+             * _UserID (-> appinsights context)
+             * _User (-> that)
+             * _UserEmail (-> that)
+             * _UserFullName (-> that)
+             *              * 
+             **/
+            prepareSAPSessionData: function(that){
                 const _UNKNOWN = "UNKNOWN";
                 that._User = _UNKNOWN;
                 that._UserID = _UNKNOWN;
                 that._rootID = _UNKNOWN;
-
-                /**
-                 *  if SAP Passport not available use legacy jQuery commands to load IDs. See SAP documentation for reference: https://help.sap.com/docs/ABAP_PLATFORM_NEW/468a97775123488ab3345a0c48cadd8f/a075ed88ef324261bca41813a6ac4a1c.html
-                 *  and https://sapui5.hana.ondemand.com/sdk/#/topic/a075ed88ef324261bca41813a6ac4a1c.html
-                 */
-                if(Passport.getRootId){
-                    that._rootID = Passport.getRootId() || _UNKNOWN;
-                }
-
-                if(Passport.getTransactionId){
-                    that._transactionID = Passport.getTransactionId()|| _UNKNOWN;
-                }
-
+            
                 /**
                  *  See the SAP docs for more details about the public Shell API
-                 *   https://sapui5.hana.ondemand.com/sdk/#/api/sap.ushell.services.AppLifeCycle
-                 *
-                 *  See community contribution for additional details:
-                 *   https://stackoverflow.com/questions/49229045/sap-fiori-get-logged-in-user-details-in-ui5-application          
-                 */
+                *   https://sapui5.hana.ondemand.com/sdk/#/api/sap.ushell.services.AppLifeCycle
+                *
+                *  See community contribution for additional details:
+                *   https://stackoverflow.com/questions/49229045/sap-fiori-get-logged-in-user-details-in-ui5-application          
+                */ 
                 sap.ushell.Container.getServiceAsync("UserInfo").then(
                     function(UserInfoService) {         
                         //Remember user at first load
@@ -230,19 +149,147 @@ sap.ui.define([
                              */
                              window.appInsights.setAuthenticatedUserContext(that._UserID);
                         }
-
-                        //register subsequent Fiori app loadings (keep track of user navigations)
-                        sap.ushell.Container.getServiceAsync("AppLifeCycle").then(function(AppLifeCycleService) {         
-                            that.myAppLifeCycle = AppLifeCycleService;
-                            //act on each Fiori app load and bind "this" context by injecting "that"
-                            that.myAppLifeCycle.attachAppLoaded(that.handleFioriAppLoaded,that);
-                        });
                     },
                     function(error){
                         console.log(error);
                     }
                 );
+            },
+
+            /**
+             * applicationType, appId, technicalAppComponentId, appSupportInfo, productName, appIntent -> that
+             */
+            prepareSAPApplicationData: function(that, currentApp){
+                const _UNKNOWN = "UNKNOWN";
+                var appManifest = _UNKNOWN;
+                var appID = _UNKNOWN;
+
+                that.applicationType = currentApp.applicationType;//UI5|WDA|NWBC|URL|TR
+
+                //leverage getInfo promise if available
+                if(currentApp.getInfo){
+                    currentApp.getInfo(["appId","technicalAppComponentId","appSupportInfo","productName","appIntent"]).then(
+                        function(info){
+                            if(info.productName){
+                                that.productName = info.productName;   
+                            }
+                            if(info.appId){
+                                that.appID = info.appId;
+                                that.appSupportInfo = info.appSupportInfo;
+                                that.technicalAppComponentID = info.technicalAppComponentId;                                
+                                that.appIntent = info.appIntent || _UNKNOWN;
+
+                            }else{
+                                //default to componentId in case no appId (e.g. apps of type NWBC does't have one)
+                                that.appID = info.technicalAppComponentId || _UNKNOWN;
+                            }
+                        },
+                        function(error){
+                            console.log(error);
+                        }
+                    );
+                }else if(currentApp.componentInstance){
+                    //only available for UI5
+                    appManifest = currentApp.componentInstance.getManifest()["sap.app"];
+                    that.appID = appManifest.id;
+                    //Get SAP app component hierarchy
+                    if(appManifest.ach){
+                        that.technicalAppComponentID = appManifest.ach;
+                    }
+                }else{
+                    //other cases? 
+                    console.log("Unhandled SAP app type. Please open an Issue at https://github.com/MartinPankraz/az-monitor-sap-fiori-plugin");
+                }
+            },
+
+            prepareSAPTraceData: function(that){
+                /**
+                 *  if SAP Passport not available use legacy jQuery commands to load IDs. See SAP documentation for reference: https://help.sap.com/docs/ABAP_PLATFORM_NEW/468a97775123488ab3345a0c48cadd8f/a075ed88ef324261bca41813a6ac4a1c.html
+                 *  and https://sapui5.hana.ondemand.com/sdk/#/topic/a075ed88ef324261bca41813a6ac4a1c.html
+                 */
+                /*                if(Passport.getRootId){
+                    that._rootID = Passport.getRootId() || _UNKNOWN;
+                }
+
+                if(Passport.getTransactionId){
+                    that._transactionID = Passport.getTransactionId()|| _UNKNOWN;
+                }*/
+            },
+
+            /**  transmit Fiori app metadata to Azure Application Insights
+             *  See API details here: https://learn.microsoft.com/azure/azure-monitor/app/api-custom-events-metrics
+             */
+            sendSAPPayloadToAzureAppInsights: function (that, appName){    
+                
+                // currentInfo in tha
+                var myInteractions = Interaction.getAll();
+                that.payload = {};
+                    
+                //id of last forwarded interaction
+                var idx = myInteractions.findIndex(el => el.id === that.lastReportedInteractionId)
+                if (idx == -1){
+                    that.indexPointer = 0;
+                }else{
+                    //exclude last item
+                    that.indexPointer = idx + 1;
+                }
+
+                var request;
+                var element;
+                var date;
+                //report collected session Interactions (continous array per session) correlated with "app-loaded event" to App Insights manually
+                for(var i=that.indexPointer;i<myInteractions.length;i++){
+
+                    request = {};
+                    element = myInteractions[i];
+                    date = new Date(element.start);
+
+                    // if there is more that one interaction, we use the application context data which is still present.
+                    // only on reaching
+                    if (i==(myInteractions.length - 1)){
+                        that.prepareSAPApplicationData(that, appName);
+                        that.payload.SAPSemanticObject = that.sapSemanticObject || null;
+                    }
+
+                    // session scoped data
+                    that.payload.SAPFioriUserID = that._UserID;
+                    that.payload.SAPFioriUserEmail = that._UserEmail;
+                    that.payload.SAPFioriUserFullName = that._UserFullName;
+
+                    // event scoped data
+                    that.payload.appID = that.appID || null;
+                    that.payload.appType = that.applicationType || null;
+                    that.payload.technicalAppComponentID = that.technicalAppComponentID || null; 
+                    that.payload.appSupportInfo = that.appSupportInfo || null;
+                    that.payload.appIntent = that.appIntent || null;
+                    that.payload.productName = that.productName || null;
+
+                    //supply standard duration field
+                    that.payload.duration = element.duration || null;
+                    //write custom start time
+                    request.time = date.toISOString();
+                    request.name = element.stepComponent || element.component;
+
+                    // interaction scoped data
+                    that.payload.SAPinteractionBytesReceived = element.bytesReceived || null;
+                    that.payload.SAPinteractionBytesSent = element.bytesSent || null;
+                    that.payload.SAPinteractionNavigationTime = element.navigation || null;
+                    that.payload.SAPinteractionNetworkTime = element.networkTime || null;
+                    that.payload.SAPinteractionProcessingTime = element.processing || null;
+                    that.payload.SAPinteractionRequestTime = element.requestTime || null;
+                    that.payload.SAPinteractionRoundTrips = element.completeRoundtrips || null;
+                    that.payload.SAPinteractionEvent = element.event || null;
+                    that.payload.SAPinteractionTrigger = element.trigger || null;
+                    that.payload.SAPinteractionComponent = element.component || null;
+                        
+                    request.properties = that.payload;
+                    //track Fiori interactions as custom event
+                    window.appInsights.trackEvent(request);   
+
+                    //remember last forwarded interaction to iterate interactions array continously according to its lifecycle
+                    that.lastReportedInteractionId = element.id;
+                }
             }
         });
     }
-);
+)
