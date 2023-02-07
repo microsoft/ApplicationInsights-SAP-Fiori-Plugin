@@ -40,7 +40,7 @@ var that;
         connectionString: "YOURCONNECTIONSTRING",
         //overridePageViewDuration: true,
         //Automatically track route changes in Single Page Applications (SPA). If true, each route change will send a new Pageview to Application Insights. Hash route changes changes (example.com/foo#bar) are also recorded as new page views
-        enableAutoRouteTracking: false
+        enableAutoRouteTracking: true
     }
 });
 
