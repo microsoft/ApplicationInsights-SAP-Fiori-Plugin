@@ -198,7 +198,7 @@ sap.ui.define([
                     }
                 }else{
                     //other cases? 
-                    console.log("Unhandled SAP app type. Please open an Issue at https://github.com/MartinPankraz/az-monitor-sap-fiori-plugin");
+                    console.log("Unhandled SAP app type. Please open an Issue at https://github.com/microsoft/ApplicationInsights-SAP-Fiori-Plugin/issues/new/choose");
                 }
             },
 
@@ -252,9 +252,9 @@ sap.ui.define([
                     }
 
                     // session scoped data
-                    that.payload.SAPFioriUserID = that._UserID;
-                    that.payload.SAPFioriUserEmail = that._UserEmail;
-                    that.payload.SAPFioriUserFullName = that._UserFullName;
+                    that.payload.SAPFioriUserID = that._UserID || null;
+                    that.payload.SAPFioriUserEmail = that._UserEmail || null;
+                    that.payload.SAPFioriUserFullName = that._UserFullName || null;
 
                     // event scoped data
                     that.payload.appID = that.appID || null;
