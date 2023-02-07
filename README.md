@@ -41,6 +41,7 @@ Default settings of this repos anticipate UI5 releases 1.86+. Use below table to
 
 | Feature   | SAPUI5 release       | Usage |
 | ----------- | ----------- | ----------- |
+| [AppLifeCycle](https://sapui5.hana.ondemand.com/sdk/#/api/sap.ushell.services.AppLifeCycle)  | 1.38+ | Use SAP's public API to handle app loaded events |
 | [Interaction](https://sapui5.hana.ondemand.com/sdk/#/api/module:sap/ui/performance/trace/Interaction)  | 1.76+ | Use SAP public tracing APIs for analysis, matching SAP backend trace measurments |
 | [User Info](https://sapui5.hana.ondemand.com/sdk/#/api/sap.ushell.services.UserInfo%23methods/Summary)  | 1.86+ | Use SAP's public Fiori user API to correlate user info |
 | [Passport](https://help.sap.com/docs/ABAP_PLATFORM_NEW/468a97775123488ab3345a0c48cadd8f/a075ed88ef324261bca41813a6ac4a1c.html)  | n.a. | Use SAP's internal API to enrich requests with RootId and TransactionId for deep linking from Azure into SAP backend transactions |
