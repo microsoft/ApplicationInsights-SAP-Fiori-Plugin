@@ -12,7 +12,7 @@
     "devDependencies": {
         "@sap/ux-ui5-tooling": "1",
         "@ui5/cli": "^3.0.0",
-        "rimraf": "^4.1.2",
+        "rimraf": "^5.0.1",
         "ui5-task-flatten-library": "0.3.0",
         "ui5-task-zipper": "^0.7.0"
     },
