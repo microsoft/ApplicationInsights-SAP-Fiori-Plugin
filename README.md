@@ -2,17 +2,18 @@
 
 This repos describes how to utilize a [SAP Fiori Launchpad Plugin](https://assets.cdn.sap.com/sapcom/docs/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.pdf) to gain **client-side insights** into Fiori metrics with [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview?tabs=net). It leverages the standard views for Azure Application Insights and a dedicated Azure Monitor Workbook for SAP.
 
-> **Note**
+> [!Note]
 > Find official API documentation for the Azure Application Insights JS snippet [here](https://github.com/microsoft/ApplicationInsights-JS#snippet-setup-ignore-if-using-npm-setup).
 
 A typical single instance setup would look like below. The plugin concept applies to native SAP on Azure deployments, SAP RISE, on-premises and [SAP BTP Build WorkZone, Standard edition](https://help.sap.com/docs/Launchpad_Service/8c8e1958338140699bd4811b37b82ece/9db48fa44f7e4c62a01bc74c82e74e07.html).
 
-> **Note**
+> [!Note]
 > Connection from BTP to the SAP workload on Azure can be done with the cloud-native [SAP Private Link Service for Azure](https://blogs.sap.com/2021/12/29/getting-started-with-btp-private-link-service-for-azure/) or the [SAP Cloud Connector](https://help.sap.com/docs/CP_CONNECTIVITY/cca91383641e40ffbe03bdc78f00f681/e6c7616abb5710148cfcf3e75d96d596.html) (SCC). For any-premises choose Azure VNet integration via [ExpressRoute](https://learn.microsoft.com/azure/expressroute/expressroute-introduction)/VPN or the SCC.
 
 ![Architecture overview](img/overview.png)
 
-> **Note** - The reverse proxy is required in case of strict [CORS policies](https://github.com/microsoft/ApplicationInsights-SAP-Fiori-Plugin#how-to-deal-with-cross-origin-resource-sharing-cors-errors). Proxy choices range from managed services like [Azure Front Door](https://learn.microsoft.com/azure/frontdoor/front-door-overview) or [Azure Application Gateway](https://learn.microsoft.com/azure/application-gateway/overview) to self-hosted solutions like Apache.
+> [!Note]
+> The reverse proxy is required in case of strict [CORS policies](https://github.com/microsoft/ApplicationInsights-SAP-Fiori-Plugin#how-to-deal-with-cross-origin-resource-sharing-cors-errors). Proxy choices range from managed services like [Azure Front Door](https://learn.microsoft.com/azure/frontdoor/front-door-overview) or [Azure Application Gateway](https://learn.microsoft.com/azure/application-gateway/overview) to self-hosted solutions like Apache.
 
 🧪Tested with Business Suite NW 7.51 and S/4HANA 2022 using Edge Browser.
 
@@ -22,7 +23,8 @@ A typical single instance setup would look like below. The plugin concept applie
 2. Imported [Azure Monitor Workbook](Fiori-Performance-Analysis.workbook) (Create new, open code view <kbd></></kbd>, select Gallery template, copy & paste the json into it and save)
 3. Fiori Launchpad with SAPUI5 1.86+ (older Fiori stacks need to consider [alternatives](#sapui5-feature-dependencies)).
 
-> **Note** - you may upgrade your UI5 stack independently from the NetWeaver release
+> [!Note]
+> You may upgrade your UI5 stack independently from the NetWeaver release
 
 4. Fiori Launchpad configured to use custom Plug-Ins. See [SAP's Fiori docs](https://www.sap.com/documents/2019/03/b2dff710-427d-0010-87a3-c30de2ffd8ff.html) (especially steps 76 onwards) to get started.
 
@@ -32,7 +34,7 @@ A typical single instance setup would look like below. The plugin concept applie
 | Launchpad Plugin URL   | `/sap/bc/ui5_ui5/sap/`        | Re-use from here or collect from `npm run deploy` output        |
 | UI5 Component ID   | `microsoft.com.flpmonitor`        | Verify from `sap.app.id` in [manifest.json](/webapp/manifest.json)        |
 
-> **Note**
+> [!Note]
 > Optionally add Azure Monitor for SAP Solutions Instance for infrastructure telemetery correlation
 
 ### SAPUI5 feature dependencies
@@ -83,7 +85,8 @@ npm start
 
 There are multiple ways to deploy the plugin to AS ABAP. Learn more [here](documentation/DEPLOYMENT.md)
 
-> **Note** - The provided guidance focuses on AS ABAP but the plugin also applies to the SAP Build Workzone, standard edition (formerly SAP Launchpad service). Learn more [here](https://developers.sap.com/tutorials/sapui5-fiori-cf-deploy.html).
+> [!Note]
+> The provided guidance focuses on AS ABAP but the plugin also applies to the SAP Build Workzone, standard edition (formerly SAP Launchpad service). Learn more [here](https://developers.sap.com/tutorials/sapui5-fiori-cf-deploy.html).
 
 ## How to deal with Cross-Origin Resource Sharing (CORS) errors
 
@@ -107,9 +110,11 @@ and something like this on the reverse proxy with a **special port** to identify
 </If>
 ```
 
-> **Note** - Learn more about the setup with Azure Application Gateway [here](https://learn.microsoft.com/azure/application-gateway/url-route-overview) and for Azure Front Door [here](https://learn.microsoft.com/azure/frontdoor/front-door-route-matching?pivots=front-door-standard-premium).
+> [!Note]
+> Learn more about the setup with Azure Application Gateway [here](https://learn.microsoft.com/azure/application-gateway/url-route-overview) and for Azure Front Door [here](https://learn.microsoft.com/azure/frontdoor/front-door-route-matching?pivots=front-door-standard-premium).
 
-> **Note** - Learn more about overriding the SAP standard regarding CORS settings on the Fiori layer in this [blog post](https://blogs.sap.com/2022/08/02/embed-self-hosted-sap-fiori-launchpad-into-microsoft-teams/).
+> [!Note]
+> Learn more about overriding the SAP standard regarding CORS settings on the Fiori layer in this [blog post](https://blogs.sap.com/2022/08/02/embed-self-hosted-sap-fiori-launchpad-into-microsoft-teams/).
 
 ## Troubleshooting hints
 
