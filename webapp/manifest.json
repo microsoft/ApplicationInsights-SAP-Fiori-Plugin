@@ -15,17 +15,7 @@
             "version": "1.8.3",
             "toolsId": "de1a36c5-cfab-462c-aafc-f1f685d4f731"
         },
-        "dataSources": {
-            "mainService": {
-                "uri": "/sap/opu/odata/",
-                "type": "OData",
-                "settings": {
-                    "annotations": [],
-                    "localUri": "localService/metadata.xml",
-                    "odataVersion": "2.0"
-                }
-            }
-        },
+        "dataSources": {},
         "crossNavigation": {
             "inbounds": {
                 "microsoft-com-flpmonitor-inbound": {
@@ -83,11 +73,6 @@
                 "settings": {
                     "bundleName": "microsoft.com.flpmonitor.i18n.i18n"
                 }
-            },
-            "": {
-                "dataSource": "mainService",
-                "preload": true,
-                "settings": {}
             }
         },
         "resources": {
